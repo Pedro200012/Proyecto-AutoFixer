@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:aplicacion_taller/screens/administrador/perfiles_screen.dart';
+import 'package:aplicacion_taller/screens/administrador/autos_screen.dart';
+import 'package:aplicacion_taller/screens/administrador/metricas_screen.dart';
+import 'package:aplicacion_taller/screens/administrador/reparaciones_screen.dart';
+import 'package:aplicacion_taller/screens/administrador/turnos_screen.dart';
 
 class AdministradorHomeScreen extends StatelessWidget {
   const AdministradorHomeScreen({super.key});
@@ -8,7 +13,7 @@ class AdministradorHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Administrador Home'),
+        title: Text('Home'),
         automaticallyImplyLeading: true, // This shows the back arrow
       ),
       body: ListView(
@@ -28,20 +33,52 @@ class AdministradorHomeScreen extends StatelessWidget {
           SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
-              // Add your onPressed logic for button 2
-              print('Administrador Button 2 pressed');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const TurnosScreen(),
+                ),
+              );
             },
-            child: Text('Admin Action 2'),
+            child: Text('Turnos'),
           ),
           SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
-              // Add your onPressed logic for button 3
-              print('Administrador Button 3 pressed');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ReparacionesScreen(),
+                ),
+              );
             },
-            child: Text('Admin Action 3'),
+            child: Text('Reparaciones'),
           ),
-          // Add more buttons as needed
+          SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AutosScreen(),
+                ),
+              );
+            },
+            child: Text('Autos'),
+          ),
+          SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MetricasScreen(),
+                ),
+              );
+            },
+            child: Text('Metricas'),
+          ),
+          SizedBox(height: 10),
         ],
       ),
     );

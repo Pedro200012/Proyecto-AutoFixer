@@ -7,7 +7,7 @@ class ClienteHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cliente Home'),
+        title: Text('Home'),
         automaticallyImplyLeading: true, // back arrow button
       ),
       body: ListView(
