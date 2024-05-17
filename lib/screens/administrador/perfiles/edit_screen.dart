@@ -1,16 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:aplicacion_taller/screens/administrador/perfiles_screen.dart';
 
-class EditProfileScreen extends StatelessWidget {
-  final Contact contact;
+class EditProfileScreen extends StatefulWidget {
+  final User user;
 
-  const EditProfileScreen({super.key, required this.contact});
+  const EditProfileScreen({super.key, required this.user});
+
+  @override
+  _EditProfileScreenState createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<EditProfileScreen> {
+  late TextEditingController _nameController;
+  late TextEditingController _phoneController;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.user.name);
+    _phoneController = TextEditingController(text: widget.user.phone);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _saveChanges() async {
+    final usersRef = FirebaseFirestore.instance.collection('users');
+    await usersRef.doc(widget.user.id).update({
+      'name': _nameController.text,
+      'phone': _phoneController.text,
+    });
+    Navigator.of(context).pop();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Profile: ${contact.name}'),
+        title: Text('Edit Profile: ${widget.user.name}'),
         automaticallyImplyLeading: true,
       ),
       body: Padding(
@@ -20,18 +52,15 @@ class EditProfileScreen extends StatelessWidget {
           children: [
             TextField(
               decoration: InputDecoration(labelText: 'Name'),
-              controller: TextEditingController(text: contact.name),
+              controller: _nameController,
             ),
             TextField(
               decoration: InputDecoration(labelText: 'Phone'),
-              controller: TextEditingController(text: contact.phone),
+              controller: _phoneController,
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Implement save functionality
-                print('Save changes for ${contact.name}');
-              },
+              onPressed: _saveChanges,
               child: Text('Save'),
             ),
           ],
