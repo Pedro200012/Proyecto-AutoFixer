@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:aplicacion_taller/screens/administrador/perfiles_screen.dart';
+import 'package:aplicacion_taller/screens/administrador/perfiles/list_screen.dart';
 import 'package:aplicacion_taller/screens/administrador/autos_screen.dart';
 import 'package:aplicacion_taller/screens/administrador/metricas_screen.dart';
 import 'package:aplicacion_taller/screens/administrador/reparaciones_screen.dart';

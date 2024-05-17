@@ -2,7 +2,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:aplicacion_taller/screens/login_screen.dart';
 import 'package:aplicacion_taller/screens/administrador/home_screen.dart';
-import 'package:aplicacion_taller/screens/administrador/perfiles_screen.dart';
+import 'package:aplicacion_taller/screens/administrador/perfiles/list_screen.dart';
 import 'package:aplicacion_taller/screens/administrador/autos_screen.dart';
 import 'package:aplicacion_taller/screens/administrador/metricas_screen.dart';
 import 'package:aplicacion_taller/screens/administrador/reparaciones_screen.dart';

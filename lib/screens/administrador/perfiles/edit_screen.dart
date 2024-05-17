@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:aplicacion_taller/screens/administrador/perfiles_screen.dart';
+import 'package:aplicacion_taller/entities/user.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final User user;

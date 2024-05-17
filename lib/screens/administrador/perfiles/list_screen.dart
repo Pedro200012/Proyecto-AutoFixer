@@ -2,23 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:aplicacion_taller/screens/administrador/perfiles/details_screen.dart';
 import 'package:aplicacion_taller/screens/administrador/perfiles/edit_screen.dart';
-
-class User {
-  final String id;
-  final String name;
-  final String phone;
-
-  User({required this.id, required this.name, required this.phone});
-
-  factory User.fromFirestore(DocumentSnapshot doc) {
-    Map data = doc.data() as Map<String, dynamic>;
-    return User(
-      id: doc.id,
-      name: data['name'] ?? '',
-      phone: data['phone'] ?? '',
-    );
-  }
-}
+import 'package:aplicacion_taller/entities/user.dart';
 
 class PerfilesScreen extends StatelessWidget {
   const PerfilesScreen({super.key});
