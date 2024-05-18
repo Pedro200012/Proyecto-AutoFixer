@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:aplicacion_taller/screens/administrador/perfiles/list_screen.dart';
 import 'package:aplicacion_taller/screens/administrador/autos_screen.dart';
@@ -9,12 +11,23 @@ import 'package:aplicacion_taller/screens/administrador/turnos_screen.dart';
 class AdministradorHomeScreen extends StatelessWidget {
   const AdministradorHomeScreen({super.key});
 
+  Future<void> _logout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    context.go('/');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
-        automaticallyImplyLeading: true, // This shows the back arrow
+        automaticallyImplyLeading: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () => _logout(context),
+          ),
+        ],
       ),
       body: ListView(
         padding: EdgeInsets.all(16.0),
