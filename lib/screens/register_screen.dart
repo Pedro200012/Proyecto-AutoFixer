@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String _errorMessage = '';
 
-  Future<void> _login() async {
+  Future<void> _register() async {
     try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: Text('Register'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -63,8 +63,8 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             SizedBox(height: 16.0),
             ElevatedButton(
-              onPressed: _login,
-              child: Text('Login'),
+              onPressed: _register,
+              child: Text('Register'),
             ),
             SizedBox(height: 16.0),
             if (_errorMessage.isNotEmpty)
@@ -72,13 +72,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 _errorMessage,
                 style: TextStyle(color: Colors.red),
               ),
-            SizedBox(height: 16.0),
-            TextButton(
-              onPressed: () {
-                context.go('/register');
-              },
-              child: Text('Don\'t have an account? Register here.'),
-            ),
           ],
         ),
       ),

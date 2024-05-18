@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 
 import 'package:aplicacion_taller/screens/login_screen.dart';
+import 'package:aplicacion_taller/screens/register_screen.dart';
 import 'package:aplicacion_taller/screens/administrador/home_screen.dart';
 import 'package:aplicacion_taller/screens/administrador/perfiles/list_screen.dart';
 import 'package:aplicacion_taller/screens/administrador/autos_screen.dart';
@@ -14,6 +15,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => const RegisterScreen(),
     ),
     GoRoute(
       path: '/cliente',
