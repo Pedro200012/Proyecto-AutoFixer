@@ -76,6 +76,13 @@ class _SerivceSelectionViewState extends State<_SerivceSelectionView> {
             'Precio Total: $precioTotal',
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
+          const SizedBox(height: 30),
+          Center(
+            child: ElevatedButton(
+                onPressed: () {
+                  //enviar solicitud
+                }, child: const Text('Solicitar')),
+          )
         ],
       ),
     );
