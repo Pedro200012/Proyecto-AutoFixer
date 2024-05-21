@@ -1,3 +1,4 @@
+import 'package:aplicacion_taller/screens/cliente/select_service_screen.dart';
 import 'package:go_router/go_router.dart';
 
 // entities
@@ -82,8 +83,14 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/cliente/vehiculo/edit',
       builder: (context, state) => const VehicleEditScreen(
-        //vehiculo: state.extra as Vehicle,
-      ),
+          //vehiculo: state.extra as Vehicle,
+          ),
+    ),
+     GoRoute(
+      path: '/cliente/selectService',
+      builder: (context, state) => const SeleccionarServicio(
+          //vehiculo: state.extra as Vehicle,
+          ),
     ),
   ],
 );
