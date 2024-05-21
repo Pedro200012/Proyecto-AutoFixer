@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:aplicacion_taller/screens/administrador/perfiles/details_screen.dart';
-import 'package:aplicacion_taller/screens/administrador/perfiles/edit_screen.dart';
+import 'package:aplicacion_taller/screens/admin/cliente/details_screen.dart';
+import 'package:aplicacion_taller/screens/admin/cliente/edit_screen.dart';
 import 'package:aplicacion_taller/entities/user.dart';
 
 class PerfilesScreen extends StatelessWidget {

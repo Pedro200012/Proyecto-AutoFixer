@@ -1,3 +1,5 @@
+import 'package:aplicacion_taller/screens/cliente/vehiculo/details_screen.dart';
+import 'package:aplicacion_taller/screens/cliente/vehiculo/list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
@@ -28,28 +30,16 @@ class ClienteHomeScreen extends StatelessWidget {
         children: [
           ElevatedButton(
             onPressed: () {
-              // Add your onPressed logic for button 1
-              print('Cliente Button 1 pressed');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const VehicleListScreen(),
+                ),
+              );
             },
-            child: Text('Cliente Action 1'),
+            child: Text('Vehiculos'),
           ),
           SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              // Add your onPressed logic for button 2
-              print('Cliente Button 2 pressed');
-            },
-            child: Text('Cliente Action 2'),
-          ),
-          SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              // Add your onPressed logic for button 3
-              print('Cliente Button 3 pressed');
-            },
-            child: Text('Cliente Action 3'),
-          ),
-          // Add more buttons as needed
         ],
       ),
     );
