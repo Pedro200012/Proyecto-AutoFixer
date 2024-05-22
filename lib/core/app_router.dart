@@ -1,3 +1,4 @@
+import 'package:aplicacion_taller/screens/admin/solicitudAdmin_screen.dart';
 import 'package:go_router/go_router.dart';
 
 // entities
@@ -33,7 +34,7 @@ final GoRouter appRouter = GoRouter(
   routes: [
     // account
     GoRoute(
-      path: '/', // login
+      path: '/login', // login
       builder: (context, state) => const LoginScreen(),
     ),
     GoRoute(
@@ -71,6 +72,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/administrador/metricas',
       builder: (context, state) => const MetricasScreen(),
+    ),
+    GoRoute(
+      path: '/', // /administrador/solicitud
+      builder: (context, state) => const SolicitudAdminScreen(),
     ),
 
     // cliente > vehiculo
