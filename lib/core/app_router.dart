@@ -98,7 +98,7 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/sueltas/calendar',
-      builder: (context, state) => const RepairRequestCalendarScreen(),
+      builder: (context, state) => const RepairRequestCalendar(),
     ),
     GoRoute(
       path: '/sueltas/repair-form',
