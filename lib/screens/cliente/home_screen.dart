@@ -1,3 +1,4 @@
+import 'package:aplicacion_taller/screens/cliente/select_service_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/details_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/list_screen.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +41,17 @@ class ClienteHomeScreen extends StatelessWidget {
             child: Text('Vehiculos'),
           ),
           SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SeleccionarServicio(),
+                ),
+              );
+            },
+            child: Text('Selecionar servicio'),
+          ),
         ],
       ),
     );
