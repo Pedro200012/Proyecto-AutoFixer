@@ -14,9 +14,11 @@ class SeleccionarServicio extends StatefulWidget {
 
 class _SeleccionarServicioState extends State<SeleccionarServicio> {
   late Future<List<Vehicle>> _vehiclesFuture;
-  Vehicle? _vehiculoSeleccionado;
+  Vehicle?
+      _vehiculoSeleccionado; // Variable para almacenar el vehículo seleccionado
   Set<Service> _selectedServices = {};
   double _precioTotal = 0.0;
+  bool _vehiculosDisponibles = true; // Variable para realizar un seguimiento de si hay vehículos disponibles
 
   @override
   void initState() {
@@ -39,6 +41,7 @@ class _SeleccionarServicioState extends State<SeleccionarServicio> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   if (snapshot.hasData) {
+                    _vehiculosDisponibles = true; // Hay vehículos disponibles
                     return ExpansionTile(
                       title: const Text('Seleccionar vehiculo'),
                       subtitle: _vehiculoSeleccionado != null
@@ -51,7 +54,8 @@ class _SeleccionarServicioState extends State<SeleccionarServicio> {
                           groupValue: _vehiculoSeleccionado,
                           onChanged: (value) {
                             setState(() {
-                              _vehiculoSeleccionado = value;
+                              _vehiculoSeleccionado =
+                                  value; // Actualiza el vehículo seleccionado
                             });
                           },
                           title: Text('${vehicle.brand} ${vehicle.model}'),
@@ -59,6 +63,7 @@ class _SeleccionarServicioState extends State<SeleccionarServicio> {
                       }).toList(),
                     );
                   } else {
+                    _vehiculosDisponibles = false; // No hay vehículos disponibles
                     return const Text('No hay vehículos disponibles');
                   }
                 } else {
@@ -70,19 +75,20 @@ class _SeleccionarServicioState extends State<SeleccionarServicio> {
               padding: EdgeInsets.all(16.0),
             ),
             ...services.map((service) => CheckboxListTile(
-                title: Text(service.nombre),
-                value: _selectedServices.contains(service),
-                onChanged: (bool? value) {
-                  setState(() {
-                    if (value == true) {
-                      _selectedServices.add(service);
-                      _precioTotal += service.precio;
-                    } else {
-                      _selectedServices.remove(service);
-                      _precioTotal -= service.precio;
-                    }
-                  });
-                })),
+                  title: Text(service.nombre),
+                  value: _selectedServices.contains(service),
+                  onChanged: _vehiculosDisponibles ? (bool? value) {
+                    setState(() {
+                      if (value == true) {
+                        _selectedServices.add(service);
+                        _precioTotal += service.precio;
+                      } else {
+                        _selectedServices.remove(service);
+                        _precioTotal -= service.precio;
+                      }
+                    });
+                  } : null, // Deshabilita la casilla de verificación si no hay vehículos disponibles
+                )),
             const Divider(),
             Text(
               'Precio Total: $_precioTotal',
@@ -92,11 +98,18 @@ class _SeleccionarServicioState extends State<SeleccionarServicio> {
             Center(
               child: ElevatedButton(
                   onPressed: () {
-                    //TODO
-                    //enviar solicitud
-                    //asegurarse de que si no hay vehiculo seleccionado, no mandar la solicitud
+                    if (_vehiculoSeleccionado != null) {
+                      // Aquí pondrías el código para enviar la solicitud
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'Por favor selecciona un vehículo antes de solicitar.'),
+                        ),
+                      );
+                    }
                   },
-                  child: const Text('Solicitar')),
+                  child: const Text('Reservar turno')),
             )
           ],
         ),
