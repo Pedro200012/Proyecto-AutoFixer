@@ -34,7 +34,7 @@ final GoRouter appRouter = GoRouter(
   routes: [
     // account
     GoRoute(
-      path: '/login', // login
+      path: '/', // login
       builder: (context, state) => const LoginScreen(),
     ),
     GoRoute(
@@ -74,7 +74,7 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const MetricasScreen(),
     ),
     GoRoute(
-      path: '/', // /administrador/solicitud
+      path: '/a', // /administrador/solicitud
       builder: (context, state) => const SolicitudAdminScreen(),
     ),
 
