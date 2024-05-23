@@ -86,11 +86,24 @@ final GoRouter appRouter = GoRouter(
           //vehiculo: state.extra as Vehicle,
           ),
     ),
-     GoRoute(
+    GoRoute(
       path: '/cliente/selectService',
       builder: (context, state) => const SeleccionarServicio(
           //vehiculo: state.extra as Vehicle,
           ),
+    ),
+    // screens sueltas
+    GoRoute(
+      path: '/sueltas',
+      builder: (context, state) => const SueltasHomeScreen(),
+    ),
+    GoRoute(
+      path: '/sueltas/calendar',
+      builder: (context, state) => const RepairRequestCalendar(),
+    ),
+    GoRoute(
+      path: '/sueltas/repair-form',
+      builder: (context, state) => RepairRequestFormScreen(),
     ),
   ],
 );
