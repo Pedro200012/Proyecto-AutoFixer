@@ -4,12 +4,14 @@ class Vehicle {
   final String model;
   final String brand;
   final String licensePlate;
-  final int? year;
+  final String userID;
+  final String? year;
 
   Vehicle({
     required this.model,
     required this.brand,
     required this.licensePlate,
+    required this.userID,
     this.year,
   });
 
@@ -19,6 +21,7 @@ class Vehicle {
       model: data['model'] ?? '',
       brand: data['brand'] ?? '',
       licensePlate: data['licensePlate'] ?? '',
+      userID: data['userID'],
       year: data['year'],
     );
   }
@@ -28,12 +31,13 @@ class Vehicle {
       'model': model,
       'brand': brand,
       'licensePlate': licensePlate,
+      'userID': userID,
       'year': year,
     };
   }
 }
 
 List<Vehicle> vehicles = [
-  Vehicle(model: 'Sedan', brand: 'Toyota', licensePlate: 'ABC123', year: 2015),
-  Vehicle(model: 'Adventure', brand: 'Fiat', licensePlate: 'HJF123', year: 2010),
+  Vehicle(model: 'Sedan', brand: 'Toyota', licensePlate: 'ABC123', userID:'', year: '2015'),
+  Vehicle(model: 'Adventure', brand: 'Fiat', licensePlate: 'HJF123', userID:'', year: '2010'),
 ];

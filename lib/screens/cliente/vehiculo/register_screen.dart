@@ -1,3 +1,6 @@
+import 'package:aplicacion_taller/entities/vehicle.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,6 +35,9 @@ class _RegistroAutoViewState extends State<_RegistroAutoView> {
   final TextEditingController _marcaController = TextEditingController();
   final TextEditingController _patenteController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String userSesionID = FirebaseAuth.instance.currentUser?.uid ??
+      ''; // tener la sesion del usuario
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +105,7 @@ class _RegistroAutoViewState extends State<_RegistroAutoView> {
           const SizedBox(height: 24),
           Center(
             child: ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 String modelo = _modeloController.text;
                 String marca = _marcaController.text;
                 String patente = _patenteController.text;
@@ -115,19 +121,24 @@ class _RegistroAutoViewState extends State<_RegistroAutoView> {
                       content: Text('Por favor, complete todos los campos.'),
                     ),
                   );
+                } else if (userSesionID.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Usuario no registrado'),
+                  ));
                 } else {
+                  final newVechicle = Vehicle(
+                      model: _modeloController.text,
+                      brand: _marcaController.text,
+                      licensePlate: _patenteController.text,
+                      userID: userSesionID,
+                      year: _yearController.text);
+                  final firestorVehicle = newVechicle.toFirestore();
+                  await _firestore.collection('vehiculos').add(firestorVehicle);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Auto registrado correctamente.'),
                     ),
                   );
-                  // autos.add(Auto(
-                  //     modelo: modelo,
-                  //     marca: marca,
-                  //     patente: patente,
-                  //     year: int.tryParse(year)));
-
-                  // Actualizar el estado para reconstruir la interfaz de usuario
                   setState(() {});
 
                   // Volver a la pantalla anterior
