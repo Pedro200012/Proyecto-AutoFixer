@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SeleccionarServicio extends StatefulWidget {
   static const String name = 'seleccionar-servicio-screen';
-  const SeleccionarServicio({Key? key}) : super(key: key);
+  const SeleccionarServicio({super.key});
 
   @override
   State<SeleccionarServicio> createState() => _SeleccionarServicioState();
@@ -14,11 +14,10 @@ class SeleccionarServicio extends StatefulWidget {
 
 class _SeleccionarServicioState extends State<SeleccionarServicio> {
   late Future<List<Vehicle>> _vehiclesFuture;
-  Vehicle?
-      _vehiculoSeleccionado; // Variable para almacenar el vehículo seleccionado
-  Set<Service> _selectedServices = {};
+  Vehicle? _vehiculoSeleccionado;
+  final Set<Service> _selectedServices = {};
   double _precioTotal = 0.0;
-  bool _vehiculosDisponibles = true; // Variable para realizar un seguimiento de si hay vehículos disponibles
+  bool _vehiculosDisponibles = true;
 
   @override
   void initState() {
@@ -41,7 +40,7 @@ class _SeleccionarServicioState extends State<SeleccionarServicio> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   if (snapshot.hasData) {
-                    _vehiculosDisponibles = true; // Hay vehículos disponibles
+                    _vehiculosDisponibles = true;
                     return ExpansionTile(
                       title: const Text('Seleccionar vehiculo'),
                       subtitle: _vehiculoSeleccionado != null
@@ -63,7 +62,7 @@ class _SeleccionarServicioState extends State<SeleccionarServicio> {
                       }).toList(),
                     );
                   } else {
-                    _vehiculosDisponibles = false; // No hay vehículos disponibles
+                    _vehiculosDisponibles = false;
                     return const Text('No hay vehículos disponibles');
                   }
                 } else {
@@ -77,17 +76,20 @@ class _SeleccionarServicioState extends State<SeleccionarServicio> {
             ...services.map((service) => CheckboxListTile(
                   title: Text(service.nombre),
                   value: _selectedServices.contains(service),
-                  onChanged: _vehiculosDisponibles ? (bool? value) {
-                    setState(() {
-                      if (value == true) {
-                        _selectedServices.add(service);
-                        _precioTotal += service.precio;
-                      } else {
-                        _selectedServices.remove(service);
-                        _precioTotal -= service.precio;
-                      }
-                    });
-                  } : null, // Deshabilita la casilla de verificación si no hay vehículos disponibles
+                  onChanged: _vehiculosDisponibles &&
+                          _vehiculoSeleccionado != null
+                      ? (bool? value) {
+                          setState(() {
+                            if (value == true) {
+                              _selectedServices.add(service);
+                              _precioTotal += service.precio;
+                            } else {
+                              _selectedServices.remove(service);
+                              _precioTotal -= service.precio;
+                            }
+                          });
+                        }
+                      : null, // Deshabilita la casilla de verificación si no hay vehículos disponibles o no hay vehículo seleccionado
                 )),
             const Divider(),
             Text(
@@ -99,12 +101,12 @@ class _SeleccionarServicioState extends State<SeleccionarServicio> {
               child: ElevatedButton(
                   onPressed: () {
                     if (_vehiculoSeleccionado != null) {
-                      // Aquí pondrías el código para enviar la solicitud
+                      //ir para turnos
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text(
-                              'Por favor selecciona un vehículo antes de solicitar.'),
+                              'Por favor seleccione o agregue un vehículo antes de solicitar.'),
                         ),
                       );
                     }
