@@ -1,7 +1,7 @@
 import 'package:aplicacion_taller/entities/vehicle.dart';
-import 'package:aplicacion_taller/screens/cliente/vehiculo/details_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/register_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
 
 class VehicleListScreen extends StatefulWidget {
@@ -20,11 +20,28 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
       appBar: AppBar(
         title: const Text('Vehiculos'),
       ),
-      body: ListView.builder(
-        itemCount: vehicles.length,
-        itemBuilder: (context, index) {
-          final autoAux = vehicles[index];
-          return _buildAutoCard(autoAux);
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('vehiculos').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text('Error al cargar los vehículos'));
+          } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text('No hay vehículos disponibles'));
+          }
+
+          final List<Vehicle> vehicles = snapshot.data!.docs.map((doc) {
+            return Vehicle.fromFirestore(doc);
+          }).toList();
+
+          return ListView.builder(
+            itemCount: vehicles.length,
+            itemBuilder: (context, index) {
+              final autoAux = vehicles[index];
+              return _buildAutoCard(autoAux);
+            },
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(
