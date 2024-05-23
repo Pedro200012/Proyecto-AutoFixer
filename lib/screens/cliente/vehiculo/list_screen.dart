@@ -1,19 +1,28 @@
-import 'package:aplicacion_taller/entities/vehicle.dart';
-import 'package:aplicacion_taller/screens/cliente/vehiculo/register_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:aplicacion_taller/entities/vehicle.dart';
+import 'package:aplicacion_taller/screens/cliente/vehiculo/register_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class VehicleListScreen extends StatefulWidget {
   static const String name = 'home-screen';
 
-  const VehicleListScreen({super.key});
+  const VehicleListScreen({Key? key}) : super(key: key);
 
   @override
   _VehicleListScreenState createState() => _VehicleListScreenState();
 }
 
 class _VehicleListScreenState extends State<VehicleListScreen> {
+  late final String userId; // Variable para almacenar el ID del usuario
+
+  @override
+  void initState() {
+    super.initState();
+    userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +30,10 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
         title: const Text('Vehiculos'),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('vehiculos').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('vehiculos')
+            .where('userID', isEqualTo: userId) // Filtrar por ID de usuario
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
