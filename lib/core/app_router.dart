@@ -25,6 +25,11 @@ import 'package:aplicacion_taller/screens/cliente/vehiculo/register_screen.dart'
 import 'package:aplicacion_taller/screens/cliente/vehiculo/details_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/edit_screen.dart';
 
+// sueltas
+import 'package:aplicacion_taller/screens/sueltas/calander.dart';
+import 'package:aplicacion_taller/screens/sueltas/home_screen.dart';
+import 'package:aplicacion_taller/screens/sueltas/repair_form.dart';
+
 final GoRouter appRouter = GoRouter(
   routes: [
     // account
