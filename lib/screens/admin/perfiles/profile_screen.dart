@@ -270,18 +270,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 } else {
                   return Expanded(
                     child: ListView.builder(
-                      itemCount: snapshot.data!.length + 1, // +1 for the button
+                      itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
-                        if (index == snapshot.data!.length) {
-                          // Last item, display the button
-                          return Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child: ElevatedButton(
-                              onPressed: () => _addVehicle(context),
-                              child: Text('Add New Vehicle'),
-                            ),
-                          );
-                        }
                         var vehicle = snapshot.data![index];
                         return Card(
                           elevation: 4,
@@ -338,6 +328,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   );
                 }
               },
+            ),
+            SizedBox(height: 10),
+            Center(
+              child: ElevatedButton(
+                onPressed: () => _addVehicle(context),
+                child: Text('Add New Vehicle'),
+              ),
             ),
           ],
         ),
