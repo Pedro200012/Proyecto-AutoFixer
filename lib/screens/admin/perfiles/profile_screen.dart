@@ -267,11 +267,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   future: _fetchUserVehicles(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
+                      return Center(heightFactor: 2, child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('Error fetching vehicles'));
+                      return Center(heightFactor: 2, child: Text('Error fetching vehicles'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(child: Text('No vehicles found'));
+                      return Center(heightFactor: 2, child: Text('No vehicles found'));
                     } else {
                       return ListView.builder(
                         shrinkWrap: true,
