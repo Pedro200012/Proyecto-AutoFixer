@@ -31,12 +31,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _deleteVehicle(String vehicleId) async {
-    await FirebaseFirestore.instance.collection('vehiculos').doc(vehicleId).delete();
+    await FirebaseFirestore.instance
+        .collection('vehiculos')
+        .doc(vehicleId)
+        .delete();
   }
 
   void _editUserInfo(BuildContext context) {
-    final TextEditingController nameController = TextEditingController(text: user.name);
-    final TextEditingController phoneController = TextEditingController(text: user.phone);
+    final TextEditingController nameController =
+        TextEditingController(text: user.name);
+    final TextEditingController phoneController =
+        TextEditingController(text: user.phone);
 
     showDialog(
       context: context,
@@ -90,10 +95,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _editVehicle(BuildContext context, Vehicle vehicle) {
-    final TextEditingController modelController = TextEditingController(text: vehicle.model);
-    final TextEditingController brandController = TextEditingController(text: vehicle.brand);
-    final TextEditingController licensePlateController = TextEditingController(text: vehicle.licensePlate);
-    final TextEditingController yearController = TextEditingController(text: vehicle.year ?? '');
+    final TextEditingController modelController =
+        TextEditingController(text: vehicle.model);
+    final TextEditingController brandController =
+        TextEditingController(text: vehicle.brand);
+    final TextEditingController licensePlateController =
+        TextEditingController(text: vehicle.licensePlate);
+    final TextEditingController yearController =
+        TextEditingController(text: vehicle.year ?? '');
 
     showDialog(
       context: context,
@@ -131,12 +140,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 try {
                   await FirebaseFirestore.instance
                       .collection('vehiculos')
-                      .doc(vehicle.id) // Use vehicle.id instead of vehicle.licensePlate
+                      .doc(vehicle
+                          .id) // Use vehicle.id instead of vehicle.licensePlate
                       .update({
                     'model': modelController.text,
                     'brand': brandController.text,
                     'licensePlate': licensePlateController.text,
-                    'year': yearController.text.isEmpty ? null : yearController.text,
+                    'year': yearController.text.isEmpty
+                        ? null
+                        : yearController.text,
                   });
 
                   setState(() {});
@@ -146,6 +158,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 }
               },
               child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _addVehicle(BuildContext context) {
+    final TextEditingController modelController = TextEditingController();
+    final TextEditingController brandController = TextEditingController();
+    final TextEditingController licensePlateController =
+        TextEditingController();
+    final TextEditingController yearController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Add New Vehicle'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: modelController,
+                decoration: InputDecoration(labelText: 'Model'),
+              ),
+              TextField(
+                controller: brandController,
+                decoration: InputDecoration(labelText: 'Brand'),
+              ),
+              TextField(
+                controller: licensePlateController,
+                decoration: InputDecoration(labelText: 'License Plate'),
+              ),
+              TextField(
+                controller: yearController,
+                decoration: InputDecoration(labelText: 'Year'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                try {
+                  await FirebaseFirestore.instance.collection('vehiculos').add({
+                    'model': modelController.text,
+                    'brand': brandController.text,
+                    'licensePlate': licensePlateController.text,
+                    'userID': user.id,
+                    'year': yearController.text.isEmpty
+                        ? null
+                        : yearController.text,
+                  });
+
+                  setState(() {});
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  print('Error adding vehicle: $e');
+                }
+              },
+              child: Text('Add'),
             ),
           ],
         );
@@ -165,6 +242,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text('Profile:',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Card(
               elevation: 4,
               child: ListTile(
@@ -177,7 +256,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             SizedBox(height: 20),
-            Text('Vehicles:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text('Vehicles:',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Expanded(
               child: FutureBuilder<List<Vehicle>>(
                 future: _fetchUserVehicles(),
@@ -189,55 +269,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Center(child: Text('No vehicles found'));
                   } else {
-                    return ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        var vehicle = snapshot.data![index];
-                        return Card(
-                          elevation: 4,
-                          child: ListTile(
-                            title: Text('${vehicle.brand} ${vehicle.model} (${vehicle.year ?? 'N/A'})'),
-                            subtitle: Text('License Plate: ${vehicle.licensePlate}'),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: Icon(Icons.edit),
-                                  onPressed: () {
-                                    _editVehicle(context, vehicle);
-                                  },
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.delete),
-                                  onPressed: () async {
-                                    bool? confirmDelete = await showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        title: Text('Delete Vehicle'),
-                                        content: Text('Are you sure you want to delete this vehicle?'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () => Navigator.of(context).pop(false),
-                                            child: Text('Cancel'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () => Navigator.of(context).pop(true),
-                                            child: Text('Delete'),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                    if (confirmDelete == true) {
-                                      await _deleteVehicle(vehicle.id); // Use vehicle.id instead of vehicle.licensePlate
-                                      setState(() {});
-                                    }
-                                  },
-                                ),
-                              ],
+                    return Expanded(
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (context, index) {
+                                var vehicle = snapshot.data![index];
+                                return Card(
+                                  elevation: 4,
+                                  child: ListTile(
+                                    title: Text(
+                                        '${vehicle.brand} ${vehicle.model} (${vehicle.year ?? 'N/A'})'),
+                                    subtitle: Text(
+                                        'License Plate: ${vehicle.licensePlate}'),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(Icons.edit),
+                                          onPressed: () {
+                                            _editVehicle(context, vehicle);
+                                          },
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.delete),
+                                          onPressed: () async {
+                                            bool? confirmDelete =
+                                                await showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                title: Text('Delete Vehicle'),
+                                                content: Text(
+                                                    'Are you sure you want to delete this vehicle?'),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.of(context)
+                                                            .pop(false),
+                                                    child: Text('Cancel'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.of(context)
+                                                            .pop(true),
+                                                    child: Text('Delete'),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                            if (confirmDelete == true) {
+                                              await _deleteVehicle(vehicle.id);
+                                              setState(() {});
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
-                        );
-                      },
+                          SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: () => _addVehicle(context),
+                            child: Text('Add New Vehicle'),
+                          ),
+                        ],
+                      ),
                     );
                   }
                 },
