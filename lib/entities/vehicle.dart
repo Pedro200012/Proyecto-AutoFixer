@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Vehicle {
+  final String id;  // Nuevo campo id
   final String model;
   final String brand;
   final String licensePlate;
@@ -8,6 +9,7 @@ class Vehicle {
   final String? year;
 
   Vehicle({
+    required this.id,
     required this.model,
     required this.brand,
     required this.licensePlate,
@@ -18,6 +20,7 @@ class Vehicle {
   factory Vehicle.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return Vehicle(
+      id: doc.id,  // Asignar el id del documento
       model: data['model'] ?? '',
       brand: data['brand'] ?? '',
       licensePlate: data['licensePlate'] ?? '',
@@ -36,8 +39,3 @@ class Vehicle {
     };
   }
 }
-
-List<Vehicle> vehicles = [
-  Vehicle(model: 'Sedan', brand: 'Toyota', licensePlate: 'ABC123', userID:'', year: '2015'),
-  Vehicle(model: 'Adventure', brand: 'Fiat', licensePlate: 'HJF123', userID:'', year: '2010'),
-];

@@ -36,8 +36,7 @@ class _RegistroAutoViewState extends State<_RegistroAutoView> {
   final TextEditingController _patenteController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String userSesionID = FirebaseAuth.instance.currentUser?.uid ??
-      ''; // tener la sesion del usuario
+  String userSesionID = FirebaseAuth.instance.currentUser?.uid ?? '';
 
   @override
   Widget build(BuildContext context) {
@@ -112,10 +111,7 @@ class _RegistroAutoViewState extends State<_RegistroAutoView> {
                 String year = _yearController.text;
 
                 // Validar campos (puedes agregar más validaciones según tus necesidades)
-                if (modelo.isEmpty ||
-                    marca.isEmpty ||
-                    patente.isEmpty ||
-                    year.isEmpty) {
+                if (modelo.isEmpty || marca.isEmpty || patente.isEmpty || year.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Por favor, complete todos los campos.'),
@@ -126,23 +122,59 @@ class _RegistroAutoViewState extends State<_RegistroAutoView> {
                     content: Text('Usuario no registrado'),
                   ));
                 } else {
-                  final newVechicle = Vehicle(
-                      model: _modeloController.text,
-                      brand: _marcaController.text,
-                      licensePlate: _patenteController.text,
-                      userID: userSesionID,
-                      year: _yearController.text);
-                  final firestorVehicle = newVechicle.toFirestore();
-                  await _firestore.collection('vehiculos').add(firestorVehicle);
+                  // Crear el documento en Firestore y obtener el ID generado
+                  DocumentReference docRef = await _firestore.collection('vehiculos').add({
+                    'model': modelo,
+                    'brand': marca,
+                    'licensePlate': patente,
+                    'userID': userSesionID,
+                    'year': year,
+                  });
+
+                  final newVehicle = Vehicle(
+                    id: docRef.id,  // Asignar el ID generado por Firestore
+                    model: modelo,
+                    brand: marca,
+                    licensePlate: patente,
+                    userID: userSesionID,
+                    year: year,
+                  );
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Auto registrado correctamente.'),
                     ),
                   );
-                  setState(() {});
+                  try {
+                    DocumentReference docRef = await _firestore.collection('vehiculos').add({
+                      'model': modelo,
+                      'brand': marca,
+                      'licensePlate': patente,
+                      'userID': userSesionID,
+                      'year': year,
+                    });
 
-                  // Volver a la pantalla anterior
-                  context.pop();
+                    // After adding, fetch the document to ensure it includes the ID
+                    DocumentSnapshot doc = await docRef.get();
+                    Vehicle newVehicle = Vehicle.fromFirestore(doc);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Auto registrado correctamente.'),
+                      ),
+                    );
+
+                    setState(() {});
+
+                    // Volver a la pantalla anterior
+                    context.pop();
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error al registrar el vehículo: $e'),
+                      ),
+                    );
+                  }
                 }
               },
               child: const Text('Agregar auto'),
