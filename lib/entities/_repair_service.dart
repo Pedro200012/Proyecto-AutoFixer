@@ -4,14 +4,27 @@ class Service {
   final double precio;
   final String descripcion;
   final Tamanio tamanio;
+ 
+  Service({required this.nombre, required this.precio, required this.descripcion, required this.tamanio, required this.id});
 
-  Service({
-    required this.id, // Agregar id al constructor
-    required this.nombre,
-    required this.precio,
-    required this.descripcion,
-    required this.tamanio,
-  });
+  factory Service.fromMap(Map<String, dynamic> map) {
+    return Service(
+      nombre: map['nombre'] ?? '',
+      precio: map['precio'] ?? 0.0,
+      descripcion: map['descripcion'] ?? '',
+      tamanio: Tamanio.values[map['tamanio'] ?? 0], id: '',
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'nombre': nombre,
+      'precio': precio,
+      'descripcion': descripcion,
+      'tamanio': tamanio.index,
+    };
+  }
+
 }
 
 enum Tamanio {
