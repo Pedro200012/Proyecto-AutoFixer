@@ -14,7 +14,7 @@ import 'package:aplicacion_taller/screens/admin/home_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/home_screen.dart';
 
 // admin
-import 'package:aplicacion_taller/screens/admin/cliente/list_screen.dart';
+import 'package:aplicacion_taller/screens/admin/perfiles/home_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_autos_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_metricas_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_reparaciones_screen.dart';

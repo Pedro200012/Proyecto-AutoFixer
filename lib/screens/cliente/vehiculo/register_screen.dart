@@ -111,10 +111,7 @@ class _RegistroAutoViewState extends State<_RegistroAutoView> {
                 String year = _yearController.text;
 
                 // Validar campos (puedes agregar más validaciones según tus necesidades)
-                if (modelo.isEmpty ||
-                    marca.isEmpty ||
-                    patente.isEmpty ||
-                    year.isEmpty) {
+                if (modelo.isEmpty || marca.isEmpty || patente.isEmpty || year.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Por favor, complete todos los campos.'),
@@ -148,9 +145,36 @@ class _RegistroAutoViewState extends State<_RegistroAutoView> {
                       content: Text('Auto registrado correctamente.'),
                     ),
                   );
+                  try {
+                    DocumentReference docRef = await _firestore.collection('vehiculos').add({
+                      'model': modelo,
+                      'brand': marca,
+                      'licensePlate': patente,
+                      'userID': userSesionID,
+                      'year': year,
+                    });
 
-                  // Volver a la pantalla anterior
-                  context.pop();
+                    // After adding, fetch the document to ensure it includes the ID
+                    DocumentSnapshot doc = await docRef.get();
+                    Vehicle newVehicle = Vehicle.fromFirestore(doc);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Auto registrado correctamente.'),
+                      ),
+                    );
+
+                    setState(() {});
+
+                    // Volver a la pantalla anterior
+                    context.pop();
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error al registrar el vehículo: $e'),
+                      ),
+                    );
+                  }
                 }
               },
               child: const Text('Agregar auto'),
