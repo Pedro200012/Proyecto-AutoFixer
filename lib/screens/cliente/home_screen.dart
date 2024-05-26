@@ -1,6 +1,7 @@
 import 'package:aplicacion_taller/screens/cliente/select_service_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/details_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/list_screen.dart';
+import 'package:aplicacion_taller/screens/cliente/vehiculo/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
@@ -60,6 +61,17 @@ class ClienteHomeScreen extends StatelessWidget {
             child: const Text('reparacionesCliente'),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const VehicleRegisterScreen(),
+            ),
+          );
+        },
+        child: Icon(Icons.add),
       ),
     );
   }

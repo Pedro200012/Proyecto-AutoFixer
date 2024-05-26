@@ -111,7 +111,10 @@ class _RegistroAutoViewState extends State<_RegistroAutoView> {
                 String year = _yearController.text;
 
                 // Validar campos (puedes agregar más validaciones según tus necesidades)
-                if (modelo.isEmpty || marca.isEmpty || patente.isEmpty || year.isEmpty) {
+                if (modelo.isEmpty ||
+                    marca.isEmpty ||
+                    patente.isEmpty ||
+                    year.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Por favor, complete todos los campos.'),
@@ -122,31 +125,10 @@ class _RegistroAutoViewState extends State<_RegistroAutoView> {
                     content: Text('Usuario no registrado'),
                   ));
                 } else {
-                  // Crear el documento en Firestore y obtener el ID generado
-                  DocumentReference docRef = await _firestore.collection('vehiculos').add({
-                    'model': modelo,
-                    'brand': marca,
-                    'licensePlate': patente,
-                    'userID': userSesionID,
-                    'year': year,
-                  });
-
-                  final newVehicle = Vehicle(
-                    id: docRef.id,  // Asignar el ID generado por Firestore
-                    model: modelo,
-                    brand: marca,
-                    licensePlate: patente,
-                    userID: userSesionID,
-                    year: year,
-                  );
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Auto registrado correctamente.'),
-                    ),
-                  );
                   try {
-                    DocumentReference docRef = await _firestore.collection('vehiculos').add({
+                    // Crear el documento en Firestore y obtener el ID generado
+                    DocumentReference docRef =
+                        await _firestore.collection('vehiculos').add({
                       'model': modelo,
                       'brand': marca,
                       'licensePlate': patente,
@@ -154,9 +136,15 @@ class _RegistroAutoViewState extends State<_RegistroAutoView> {
                       'year': year,
                     });
 
-                    // After adding, fetch the document to ensure it includes the ID
-                    DocumentSnapshot doc = await docRef.get();
-                    Vehicle newVehicle = Vehicle.fromFirestore(doc);
+                    // Crear el nuevo vehículo
+                    final newVehicle = Vehicle(
+                      id: docRef.id, // Asignar el ID generado por Firestore
+                      model: modelo,
+                      brand: marca,
+                      licensePlate: patente,
+                      userID: userSesionID,
+                      year: year,
+                    );
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
