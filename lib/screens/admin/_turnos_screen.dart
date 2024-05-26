@@ -1,11 +1,11 @@
-import 'package:aplicacion_taller/entities/turn.dart';
-import 'package:aplicacion_taller/entities/user.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:aplicacion_taller/entities/turn.dart';
+import 'package:aplicacion_taller/entities/user.dart';
 
 class TurnosScreen extends StatelessWidget {
-  const TurnosScreen({super.key});
+  const TurnosScreen({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +67,7 @@ class _TurnItem extends StatelessWidget {
       future: FirebaseFirestore.instance
           .collection('users')
           .doc(turn.userId)
-          .get(), // Usar userId en lugar de userRef
+          .get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const LinearProgressIndicator();

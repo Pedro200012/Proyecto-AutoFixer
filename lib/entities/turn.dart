@@ -3,14 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Turn {
   final String id;
   final DateTime date;
-  final String userId; 
+  final String userId; // Ahora userId es de tipo String
   final String type;
   final String state;
 
   Turn({
     required this.id,
     required this.date,
-    required this.userId, 
+    required this.userId,
     required this.type,
     required this.state,
   });
@@ -20,7 +20,7 @@ class Turn {
     return Turn(
       id: doc.id,
       date: (data['date'] as Timestamp).toDate(),
-      userId: data['userID'] as String, 
+      userId: data['userId'] as String? ?? '', // Corregido el nombre del campo
       type: data['type'] ?? '',
       state: data['state'] ?? '',
     );
@@ -29,7 +29,7 @@ class Turn {
   Map<String, dynamic> toFirestore() {
     return {
       'date': date,
-      'userID': userId, 
+      'userId': userId, // Corregido el nombre del campo
       'type': type,
       'state': state,
     };
