@@ -37,7 +37,3 @@ class Vehicle {
   }
 }
 
-List<Vehicle> vehicles = [
-  Vehicle(model: 'Sedan', brand: 'Toyota', licensePlate: 'ABC123', userID:'', year: '2015'),
-  Vehicle(model: 'Adventure', brand: 'Fiat', licensePlate: 'HJF123', userID:'', year: '2010'),
-];
