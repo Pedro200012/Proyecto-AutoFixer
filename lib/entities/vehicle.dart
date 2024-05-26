@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Vehicle {
-  final String id;
+  final String id;  // Nuevo campo id
   final String model;
   final String brand;
   final String licensePlate;
@@ -20,7 +20,7 @@ class Vehicle {
   factory Vehicle.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return Vehicle(
-      id: doc.id,
+      id: doc.id,  // Asignar el id del documento
       model: data['model'] ?? '',
       brand: data['brand'] ?? '',
       licensePlate: data['licensePlate'] ?? '',

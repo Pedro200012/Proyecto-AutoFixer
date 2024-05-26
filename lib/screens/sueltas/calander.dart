@@ -4,7 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class RepairRequestCalendar extends StatefulWidget {
-  const RepairRequestCalendar({super.key});
+  final Function(DateTime)? onDateSelected; // Nuevo callback para la fecha seleccionada
+
+  const RepairRequestCalendar({Key? key, this.onDateSelected}) : super(key: key);
 
   @override
   _RepairRequestCalendarState createState() => _RepairRequestCalendarState();
@@ -55,7 +57,7 @@ class _RepairRequestCalendarState extends State<RepairRequestCalendar> {
       lastDay: DateTime.utc(2024, 12, 31),
       calendarFormat: CalendarFormat.month,
       selectedDayPredicate: (day) {
-         return isSameDay(_selectedDate, day);
+        return isSameDay(_selectedDate, day);
       },
       onDaySelected: (selectedDay, focusedDay) {
         setState(() {
@@ -66,6 +68,9 @@ class _RepairRequestCalendarState extends State<RepairRequestCalendar> {
   }
 
   void _handleDateSelection(DateTime selectedDate) async {
+    // Si se proporcionó una función de devolución de llamada, llámala con la fecha seleccionada
+    widget.onDateSelected?.call(selectedDate);
+
     List<String> reservedTimes = await _getReservedTimes(selectedDate);
     List<String> availableTimes = _availableTimes.where((time) => !reservedTimes.contains(time)).toList();
 
@@ -87,7 +92,7 @@ class _RepairRequestCalendarState extends State<RepairRequestCalendar> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context); // Regresar a la pantalla anterior (SelectService)
             },
             child: const Text('Cancelar'),
           ),
@@ -115,21 +120,21 @@ class _RepairRequestCalendarState extends State<RepairRequestCalendar> {
     User? user = _auth.currentUser;
     if (user == null) {
       // Handle user not logged in
-       showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Reserva confirmada'),
-        content: Text('Ha reservado el horario: $time'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Reserva confirmada'),
+          content: Text('Ha reservado el horario: $time'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       return;
     }
 
@@ -146,7 +151,7 @@ class _RepairRequestCalendarState extends State<RepairRequestCalendar> {
       'user_id': user.uid,
     });
 
-    Navigator.pop(context);
+    Navigator.pop(context); // Regresar a la pantalla anterior (SelectService)
 
     showDialog(
       context: context,
@@ -157,6 +162,7 @@ class _RepairRequestCalendarState extends State<RepairRequestCalendar> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
+              Navigator.pop(context);
             },
             child: const Text('OK'),
           ),
@@ -164,4 +170,6 @@ class _RepairRequestCalendarState extends State<RepairRequestCalendar> {
       ),
     );
   }
+
+  
 }
