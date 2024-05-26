@@ -52,6 +52,13 @@ class ClienteHomeScreen extends StatelessWidget {
             },
             child: Text('Selecionar servicio'),
           ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              context.push('/sueltas/reparations');
+            },
+            child: const Text('reparacionesCliente'),
+          ),
         ],
       ),
     );

@@ -33,13 +33,6 @@ class SueltasHomeScreen extends StatelessWidget {
               },
               child: const Text('Ir al Formulario de Reparación'),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                context.push('/sueltas/reparations');
-              },
-              child: const Text('reparacionesCliente'),
-            ),
           ],
         ),
       ),
