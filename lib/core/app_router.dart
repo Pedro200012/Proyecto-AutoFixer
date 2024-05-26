@@ -1,4 +1,7 @@
+import 'package:aplicacion_taller/entities/rerparations.dart';
 import 'package:aplicacion_taller/screens/admin/solicitudAdmin_screen.dart';
+import 'package:aplicacion_taller/screens/sueltas/progress_reparation.dart';
+import 'package:aplicacion_taller/screens/sueltas/reparaciones_screen.dart';
 import 'package:go_router/go_router.dart';
 
 // entities
@@ -108,6 +111,14 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/sueltas/repair-form',
       builder: (context, state) => RepairRequestFormScreen(),
+    ),
+    GoRoute(
+      path: '/sueltas/reparations',
+      builder: (context, state) => const ReparationHistoryScreen(),
+    ),
+    GoRoute(
+      path: '/sueltas/reparation-progress',
+      builder: (context, state) => VerProgresoReparaciones(reparation: state.extra as Reparation),
     ),
   ],
 );
