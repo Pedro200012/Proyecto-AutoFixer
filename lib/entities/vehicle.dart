@@ -9,7 +9,7 @@ class Vehicle {
   final String? year;
 
   Vehicle({
-   
+    required this.id,
     required this.model,
     required this.brand,
     required this.licensePlate,
