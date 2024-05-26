@@ -94,9 +94,8 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/cliente/vehiculo/edit',
-      builder: (context, state) => const VehicleEditScreen(
-          //vehiculo: state.extra as Vehicle,
-          ),
+      builder: (context, state) =>
+          VehicleEditScreen(vehicle: state.extra as Vehicle),
     ),
 
     // screens sueltas
@@ -118,7 +117,8 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/sueltas/reparation-progress',
-      builder: (context, state) => VerProgresoReparaciones(reparation: state.extra as Reparation),
+      builder: (context, state) =>
+          VerProgresoReparaciones(reparation: state.extra as Reparation),
     ),
   ],
 );

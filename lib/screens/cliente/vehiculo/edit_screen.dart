@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:aplicacion_taller/entities/vehicle.dart';
 
 class VehicleEditScreen extends StatelessWidget {
   static const String name = 'editar-vehiculo-screen';
-  const VehicleEditScreen({super.key});
+  final Vehicle vehicle;
+
+  const VehicleEditScreen({super.key, required this.vehicle});
 
   @override
   Widget build(BuildContext context) {
@@ -11,9 +15,9 @@ class VehicleEditScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Editar vehiculo'),
       ),
-      body: const SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Center(
-          child: _RegistroAutoView(),
+          child: _RegistroAutoView(vehicle: vehicle),
         ),
       ),
     );
@@ -21,17 +25,39 @@ class VehicleEditScreen extends StatelessWidget {
 }
 
 class _RegistroAutoView extends StatefulWidget {
-  const _RegistroAutoView();
+  final Vehicle vehicle;
+
+  const _RegistroAutoView({required this.vehicle});
 
   @override
   _RegistroAutoViewState createState() => _RegistroAutoViewState();
 }
 
 class _RegistroAutoViewState extends State<_RegistroAutoView> {
-  final TextEditingController _modeloController = TextEditingController();
-  final TextEditingController _marcaController = TextEditingController();
-  final TextEditingController _patenteController = TextEditingController();
-  final TextEditingController _yearController = TextEditingController();
+  late TextEditingController _modeloController;
+  late TextEditingController _marcaController;
+  late TextEditingController _patenteController;
+  late TextEditingController _yearController;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _modeloController = TextEditingController(text: widget.vehicle.model);
+    _marcaController = TextEditingController(text: widget.vehicle.brand);
+    _patenteController =
+        TextEditingController(text: widget.vehicle.licensePlate);
+    _yearController = TextEditingController(text: widget.vehicle.year);
+  }
+
+  @override
+  void dispose() {
+    _modeloController.dispose();
+    _marcaController.dispose();
+    _patenteController.dispose();
+    _yearController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +125,7 @@ class _RegistroAutoViewState extends State<_RegistroAutoView> {
           const SizedBox(height: 24),
           Center(
             child: ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 String modelo = _modeloController.text;
                 String marca = _marcaController.text;
                 String patente = _patenteController.text;
@@ -116,12 +142,22 @@ class _RegistroAutoViewState extends State<_RegistroAutoView> {
                     ),
                   );
                 } else {
+                  // Actualizar el documento en Firestore
+                  await _firestore
+                      .collection('vehiculos')
+                      .doc(widget.vehicle.id)
+                      .update({
+                    'model': modelo,
+                    'brand': marca,
+                    'licensePlate': patente,
+                    'year': year,
+                  });
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Auto registrado correctamente.'),
+                      content: Text('Auto editado correctamente.'),
                     ),
                   );
-                  setState(() {});
 
                   // Volver a la pantalla anterior
                   context.pop();
