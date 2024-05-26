@@ -121,13 +121,6 @@ class _RegistroAutoViewState extends State<_RegistroAutoView> {
                       content: Text('Auto registrado correctamente.'),
                     ),
                   );
-                  // autos.add(Auto(
-                  //     modelo: modelo,
-                  //     marca: marca,
-                  //     patente: patente,
-                  //     year: int.tryParse(year)));
-
-                  // Actualizar el estado para reconstruir la interfaz de usuario
                   setState(() {});
 
                   // Volver a la pantalla anterior
