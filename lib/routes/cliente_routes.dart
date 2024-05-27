@@ -12,7 +12,7 @@ import 'package:aplicacion_taller/screens/cliente/calander.dart';
 import 'package:aplicacion_taller/screens/cliente/repair_form.dart';
 
 import 'package:aplicacion_taller/entities/vehicle.dart';
-import 'package:aplicacion_taller/entities/rerparations.dart';
+import 'package:aplicacion_taller/entities/reparations.dart';
 
 final clienteRoutes = [
   GoRoute(

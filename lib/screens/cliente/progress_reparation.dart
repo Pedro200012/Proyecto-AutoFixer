@@ -1,5 +1,5 @@
 import 'package:aplicacion_taller/entities/_repair_service.dart';
-import 'package:aplicacion_taller/entities/rerparations.dart';
+import 'package:aplicacion_taller/entities/reparations.dart';
 import 'package:flutter/material.dart';
 
 class VerProgresoReparaciones extends StatelessWidget {
