@@ -150,7 +150,7 @@ class _TurnItem extends StatelessWidget {
 
   Future<Map<String, dynamic>> _getVehicleDetails(String vehicleId) async {
     final vehicleDoc = await FirebaseFirestore.instance
-        .collection('vehicles')
+        .collection('vehiculos')
         .doc(vehicleId)
         .get();
     return vehicleDoc.data() as Map<String, dynamic>? ?? {};
