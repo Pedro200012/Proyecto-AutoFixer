@@ -94,7 +94,8 @@ class _SeleccionarServicioState extends State<SeleccionarServicio> {
           }
         } else {
           return const Center(
-              child: LinearProgressIndicator()); // Muestra un indicador de carga
+              child:
+                  LinearProgressIndicator()); // Muestra un indicador de carga
         }
       },
     );
@@ -216,7 +217,7 @@ class _SeleccionarServicioState extends State<SeleccionarServicio> {
       'userId': userId,
       'vehicleId': vehicleId,
       'services': serviceIds,
-      'date': _selectedDate,
+      'ingreso': _selectedDate,
       'state': 'pendiente',
       'totalPrice': _precioTotal,
     });

@@ -61,7 +61,7 @@ class _TurnItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String formattedDate = DateFormat('dd MMM yyyy, hh:mm a').format(turn.date);
+    String formattedDate = DateFormat('dd MMM yyyy, hh:mm a').format(turn.ingreso);
 
     return FutureBuilder<DocumentSnapshot>(
       future: FirebaseFirestore.instance

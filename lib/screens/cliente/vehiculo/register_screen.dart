@@ -126,26 +126,13 @@ class _RegistroAutoViewState extends State<_RegistroAutoView> {
                   ));
                 } else {
                   try {
-                    // Crear el documento en Firestore y obtener el ID generado
-                    DocumentReference docRef =
-                        await _firestore.collection('vehiculos').add({
+                    await _firestore.collection('vehiculos').add({
                       'model': modelo,
                       'brand': marca,
                       'licensePlate': patente,
                       'userID': userSesionID,
                       'year': year,
                     });
-
-                    // Crear el nuevo vehículo
-                    final newVehicle = Vehicle(
-                      id: docRef.id, // Asignar el ID generado por Firestore
-                      model: modelo,
-                      brand: marca,
-                      licensePlate: patente,
-                      userID: userSesionID,
-                      year: year,
-                    );
-
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Auto registrado correctamente.'),
