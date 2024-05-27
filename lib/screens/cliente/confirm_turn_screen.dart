@@ -108,7 +108,7 @@ class ConfirmTurnScreen extends StatelessWidget {
                             .doc(formattedTime);
 
                         await docRef.set({
-                          'datetime': formattedTime,
+                          'time': formattedTime,
                           'reserved': true,
                           'user_id': FirebaseAuth.instance.currentUser?.uid,
                         });

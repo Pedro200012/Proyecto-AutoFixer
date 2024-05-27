@@ -21,8 +21,8 @@ class _SelectDateTimeScreenState extends State<RepairRequestCalendar> {
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
-    _selectedTime = const TimeOfDay(hour: 9, minute: 0); // Inicializar a las 9:00 AM
-    _fetchReservedTimes();
+    _selectedTime = const TimeOfDay(hour: 9, minute: 0);
+    _fetchReservedTimes(_selectedDate);
   }
 
   @override
@@ -39,9 +39,7 @@ class _SelectDateTimeScreenState extends State<RepairRequestCalendar> {
           _buildTimePicker(),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () {
-              _handleDateTimeSelection();
-            },
+            onPressed: _handleDateTimeSelection,
             child: const Text('Confirmar'),
           ),
         ],
@@ -61,37 +59,38 @@ class _SelectDateTimeScreenState extends State<RepairRequestCalendar> {
       onDaySelected: (selectedDay, focusedDay) {
         setState(() {
           _selectedDate = selectedDay;
+          _fetchReservedTimes(_selectedDate);
         });
       },
     );
   }
 
-Widget _buildTimePicker() {
-  return Expanded(
-    child: ListView.builder(
-      itemCount: 10, // Horas disponibles de 9 a 18
-      itemBuilder: (context, index) {
-        final hour = index + 9; // Empezar desde las 9:00 AM
-        final time = TimeOfDay(hour: hour, minute: 00);
-        final dateTime = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, hour, 00);
+  Widget _buildTimePicker() {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: 10,
+        itemBuilder: (context, index) {
+          final hour = index + 9;
+          final time = TimeOfDay(hour: hour, minute: 0);
+          final dateTime = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, hour, 0);
 
-        if (_isTimeAvailable(dateTime)) {
-          return ListTile(
-            title: Text(time.format(context)),
-            onTap: () {
-              setState(() {
-                _selectedTime = time;
-              });
-            },
-            selected: _selectedTime == time, // Resaltar el tiempo seleccionado
-          );
-        } else {
-          return const SizedBox(); // No mostrar horario si está reservado
-        }
-      },
-    ),
-  );
-}
+          if (_isTimeAvailable(dateTime)) {
+            return ListTile(
+              title: Text(time.format(context)),
+              onTap: () {
+                setState(() {
+                  _selectedTime = time;
+                });
+              },
+              selected: _selectedTime == time,
+            );
+          } else {
+            return const SizedBox(); // No mostrar horario si está reservado
+          }
+        },
+      ),
+    );
+  }
 
   bool _isTimeAvailable(DateTime dateTime) {
     final times = _reservedTimes[DateTime(dateTime.year, dateTime.month, dateTime.day)];
@@ -99,24 +98,45 @@ Widget _buildTimePicker() {
       final selectedTime = TimeOfDay(hour: dateTime.hour, minute: dateTime.minute);
       return !times.contains(selectedTime);
     }
-    return true; // Si no hay horarios reservados para ese día, está disponible
+    return true;
   }
 
-void _fetchReservedTimes() async {
-  final snapshot = await _firestore.collection('reservations').get();
-  snapshot.docs.forEach((doc) {
-    final date = DateTime.parse(doc.id);
-    final times = (doc['times'] as List<dynamic>).map((time) {
-      final hour = (time['hour'] as int);
-      final minute = (time['minute'] as int);
-      return TimeOfDay(hour: hour, minute: minute);
-    }).toList();
-    if (isSameDay(date, _selectedDate)) {
-      _reservedTimes[_selectedDate] = times;
-    }
-  });
-}
+  void _fetchReservedTimes(DateTime date) async {
+    try {
+      final snapshot = await _firestore
+          .collection('reservations')
+          .doc('${date.year}-${date.month}-${date.day}')
+          .collection('times')
+          .where('reserved', isEqualTo: true)
+          .get();
 
+      final times = snapshot.docs.map((doc) {
+        final data = doc.data();
+        if (data.containsKey('time') && data['time'] is String) {
+          final timeString = data['time'] as String;
+          final timeParts = timeString.split(':');
+          if (timeParts.length == 2) {
+            final hour = int.parse(timeParts[0]);
+            final minute = int.parse(timeParts[1]);
+            return TimeOfDay(hour: hour, minute: minute);
+          } else {
+            print("El campo 'time' del documento ${doc.id} no tiene el formato correcto.");
+            return null;
+          }
+        } else {
+          print("El documento ${doc.id} no tiene un campo 'time' válido.");
+          return null;
+        }
+      }).where((time) => time != null).cast<TimeOfDay>().toList();
+
+      setState(() {
+        _reservedTimes[DateTime(date.year, date.month, date.day)] = times;
+      });
+    } catch (e) {
+      // Manejar errores de manera apropiada
+      print("Error fetching reserved times: $e");
+    }
+  }
 
   void _handleDateTimeSelection() {
     final selectedDateTime = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedTime.hour, _selectedTime.minute);
