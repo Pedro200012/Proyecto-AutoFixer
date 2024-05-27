@@ -2,25 +2,25 @@ import 'package:aplicacion_taller/entities/_repair_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Reparation {
-  final String id;
+  final String? id;
   final String userid;
   final String vehicleid;
   final String state;
   final List<Service> typeService;
-  final String enteryTurnid;
-  final String exitTurnId;
+  final DateTime fechaIngreso;
+  final DateTime? fechaSalida;
+  final double? precioTotal;
 
   Reparation({
-    required this.id,
+    this.id,
     required this.userid,
     required this.typeService,
     required this.vehicleid,
     required this.state,
-    required this.enteryTurnid,
-    required this.exitTurnId,
+    required this.fechaIngreso,
+    this.fechaSalida,
+    this.precioTotal
   });
-
-  
 
   factory Reparation.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -33,8 +33,9 @@ class Reparation {
       }).toList(),
       vehicleid: data['vehicleid'] ?? '',
       state: data['state'] ?? '',
-      enteryTurnid: data['enteryTurnid'] ?? '',
-      exitTurnId: data['exitTurnId'] ?? '',
+      fechaIngreso: data['fechaIngreso'] ?? '',
+      fechaSalida: data['fechaSalida'] ?? '',
+      precioTotal: data['precioTotal'] ?? ''
     );
   }
 
@@ -44,8 +45,9 @@ class Reparation {
       'typeService': typeService.map((service) => service.toMap()).toList(),
       'vehicleid': vehicleid,
       'state': state,
-      'enteryTurnid': enteryTurnid,
-      'exitTurnId': exitTurnId,
+      'fechaIngreso': fechaIngreso,
+      'fechaSalida': fechaSalida,
+      'precioTotal': precioTotal
     };
   }
 }

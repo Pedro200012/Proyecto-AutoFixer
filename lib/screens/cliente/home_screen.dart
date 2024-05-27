@@ -56,7 +56,7 @@ class ClienteHomeScreen extends StatelessWidget {
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
-              context.push('/sueltas/reparations');
+              context.push('/cliente/reparations');
             },
             child: const Text('reparacionesCliente'),
           ),

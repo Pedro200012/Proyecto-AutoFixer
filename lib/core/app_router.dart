@@ -112,13 +112,13 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => RepairRequestFormScreen(),
     ),
     GoRoute(
-      path: '/sueltas/reparations',
+      path: '/cliente/reparations',
       builder: (context, state) => const ReparationHistoryScreen(),
     ),
-    GoRoute(
-      path: '/sueltas/reparation-progress',
-      builder: (context, state) =>
-          VerProgresoReparaciones(reparation: state.extra as Reparation),
-    ),
+    // GoRoute(
+    //   path: '/cliente/reparation-progress',
+    //   builder: (context, state) =>
+    //       VerProgresoReparaciones(reparation: state.extra as Reparation),
+    // ),
   ],
 );

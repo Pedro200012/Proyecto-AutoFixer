@@ -41,6 +41,7 @@ class _RegistroAutoViewState extends State<_RegistroAutoView> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
+  //obtener los datos actuales del vehiculo
   void initState() {
     super.initState();
     _modeloController = TextEditingController(text: widget.vehicle.model);
