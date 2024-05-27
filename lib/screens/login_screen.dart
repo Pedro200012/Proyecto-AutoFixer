@@ -80,14 +80,6 @@ class _LoginScreenState extends State<LoginScreen> {
               },
               child: Text('Don\'t have an account? Register here.'),
             ),
-            SizedBox(height: 16.0),
-            TextButton(
-              onPressed: () {
-                context.push('/sueltas');
-              },
-              child: Text('Paginas sueltas (SOLO DURANTE DESARROLLO)',
-                  style: TextStyle(color: Colors.red)),
-            ),
           ],
         ),
       ),

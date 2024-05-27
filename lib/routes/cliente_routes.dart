@@ -8,6 +8,8 @@ import 'package:aplicacion_taller/screens/cliente/vehiculo/list_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/register_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/details_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/edit_screen.dart';
+import 'package:aplicacion_taller/screens/cliente/calander.dart';
+import 'package:aplicacion_taller/screens/cliente/repair_form.dart';
 
 import 'package:aplicacion_taller/entities/vehicle.dart';
 import 'package:aplicacion_taller/entities/rerparations.dart';
@@ -22,9 +24,17 @@ final clienteRoutes = [
     builder: (context, state) => const ReparationHistoryScreen(),
   ),
   GoRoute(
-    path: '/sueltas/reparation-progress',
+    path: '/cliente/reparation-progress',
     builder: (context, state) =>
         VerProgresoReparaciones(reparation: state.extra as Reparation),
+  ),
+  GoRoute(
+    path: '/cliente/calendar',
+    builder: (context, state) => const RepairRequestCalendar(),
+  ),
+  GoRoute(
+    path: '/cliente/repair-form',
+    builder: (context, state) => RepairRequestFormScreen(),
   ),
   GoRoute(
     path: '/cliente/turns/create',

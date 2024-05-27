@@ -102,7 +102,7 @@ class _ReparationHistoryScreenState extends State<ReparationHistoryScreen> {
             Text('Estado: ${reparation.state}\nCliente: ${details['user']}'),
         trailing: const Icon(Icons.arrow_forward_ios),
         onTap: () {
-          context.push('/sueltas/reparation-progress', extra: reparation);
+          context.push('/cliente/reparation-progress', extra: reparation);
         },
       ),
     );
