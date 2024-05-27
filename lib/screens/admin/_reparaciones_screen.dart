@@ -7,10 +7,10 @@ class ReparacionesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reparaciones'),
+        title: const Text('Reparaciones'),
         automaticallyImplyLeading: true, // This shows the back arrow
       ),
-      body: Center(
+      body: const Center(
         child: Text('Reparaciones Screen'),
       ),
     );

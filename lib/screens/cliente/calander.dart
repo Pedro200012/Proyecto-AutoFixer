@@ -1,49 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class RepairRequestCalendar extends StatefulWidget {
-  final Function(DateTime)? onDateSelected; // Nuevo callback para la fecha seleccionada
+  final Function(DateTime)? onDateTimeSelected;
 
-  const RepairRequestCalendar({Key? key, this.onDateSelected}) : super(key: key);
+  const RepairRequestCalendar({Key? key, this.onDateTimeSelected}) : super(key: key);
 
   @override
-  _RepairRequestCalendarState createState() => _RepairRequestCalendarState();
+  _SelectDateTimeScreenState createState() => _SelectDateTimeScreenState();
 }
 
-class _RepairRequestCalendarState extends State<RepairRequestCalendar> {
+class _SelectDateTimeScreenState extends State<RepairRequestCalendar> {
   late DateTime _selectedDate;
-  final List<String> _availableTimes = List.generate(10, (index) => '${10 + index}:00');
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late TimeOfDay _selectedTime;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final Map<DateTime, List<TimeOfDay>> _reservedTimes = {};
 
   @override
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
+    _selectedTime = const TimeOfDay(hour: 9, minute: 0); // Inicializar a las 9:00 AM
+    _fetchReservedTimes();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calendario de Reparaciones'),
+        title: const Text('Seleccionar Fecha y Hora'),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 20),
-          const Text(
-            'Seleccione una fecha para reservar',
-            style: TextStyle(fontSize: 18),
-          ),
-          const SizedBox(height: 20),
           _buildCalendar(),
+          const SizedBox(height: 20),
+          _buildTimePicker(),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
-              _handleDateSelection(_selectedDate);
+              _handleDateTimeSelection();
             },
-            child: const Text('Reservar fecha'),
+            child: const Text('Confirmar'),
           ),
         ],
       ),
@@ -52,9 +51,9 @@ class _RepairRequestCalendarState extends State<RepairRequestCalendar> {
 
   Widget _buildCalendar() {
     return TableCalendar(
-      focusedDay: _selectedDate,
       firstDay: DateTime.utc(2024, 1, 1),
       lastDay: DateTime.utc(2024, 12, 31),
+      focusedDay: _selectedDate,
       calendarFormat: CalendarFormat.month,
       selectedDayPredicate: (day) {
         return isSameDay(_selectedDate, day);
@@ -67,109 +66,61 @@ class _RepairRequestCalendarState extends State<RepairRequestCalendar> {
     );
   }
 
-  void _handleDateSelection(DateTime selectedDate) async {
-    // Si se proporcionó una función de devolución de llamada, llámala con la fecha seleccionada
-    widget.onDateSelected?.call(selectedDate);
+Widget _buildTimePicker() {
+  return Expanded(
+    child: ListView.builder(
+      itemCount: 10, // Horas disponibles de 9 a 18
+      itemBuilder: (context, index) {
+        final hour = index + 9; // Empezar desde las 9:00 AM
+        final time = TimeOfDay(hour: hour, minute: 00);
+        final dateTime = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, hour, 00);
 
-    List<String> reservedTimes = await _getReservedTimes(selectedDate);
-    List<String> availableTimes = _availableTimes.where((time) => !reservedTimes.contains(time)).toList();
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Horarios disponibles'),
-        content: availableTimes.isEmpty
-            ? const Text('No hay horarios disponibles para esta fecha.')
-            : Column(
-                mainAxisSize: MainAxisSize.min,
-                children: availableTimes.map((time) {
-                  return ListTile(
-                    title: Text(time),
-                    onTap: () => _reserveTime(time),
-                  );
-                }).toList(),
-              ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Regresar a la pantalla anterior (SelectService)
+        if (_isTimeAvailable(dateTime)) {
+          return ListTile(
+            title: Text(time.format(context)),
+            onTap: () {
+              setState(() {
+                _selectedTime = time;
+              });
             },
-            child: const Text('Cancelar'),
-          ),
-        ],
-      ),
-    );
-  }
+            selected: _selectedTime == time, // Resaltar el tiempo seleccionado
+          );
+        } else {
+          return const SizedBox(); // No mostrar horario si está reservado
+        }
+      },
+    ),
+  );
+}
 
-  Future<List<String>> _getReservedTimes(DateTime date) async {
-    String formattedDate = "${date.year}-${date.month}-${date.day}";
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('reservations')
-        .doc(formattedDate)
-        .collection('times')
-        .get();
-
-    List<String> reservedTimes = [];
-    for (var doc in snapshot.docs) {
-      reservedTimes.add(doc['time']);
+  bool _isTimeAvailable(DateTime dateTime) {
+    final times = _reservedTimes[DateTime(dateTime.year, dateTime.month, dateTime.day)];
+    if (times != null) {
+      final selectedTime = TimeOfDay(hour: dateTime.hour, minute: dateTime.minute);
+      return !times.contains(selectedTime);
     }
-    return reservedTimes;
+    return true; // Si no hay horarios reservados para ese día, está disponible
   }
 
-  void _reserveTime(String time) async {
-    User? user = _auth.currentUser;
-    if (user == null) {
-      // Handle user not logged in
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: const Text('Reserva confirmada'),
-          content: Text('Ha reservado el horario: $time'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-      return;
+void _fetchReservedTimes() async {
+  final snapshot = await _firestore.collection('reservations').get();
+  snapshot.docs.forEach((doc) {
+    final date = DateTime.parse(doc.id);
+    final times = (doc['times'] as List<dynamic>).map((time) {
+      final hour = (time['hour'] as int);
+      final minute = (time['minute'] as int);
+      return TimeOfDay(hour: hour, minute: minute);
+    }).toList();
+    if (isSameDay(date, _selectedDate)) {
+      _reservedTimes[_selectedDate] = times;
     }
+  });
+}
 
-    String formattedDate = "${_selectedDate.year}-${_selectedDate.month}-${_selectedDate.day}";
-    DocumentReference docRef = FirebaseFirestore.instance
-        .collection('reservations')
-        .doc(formattedDate)
-        .collection('times')
-        .doc(time);
 
-    await docRef.set({
-      'time': time,
-      'reserved': true,
-      'user_id': user.uid,
-    });
-
-    Navigator.pop(context); // Regresar a la pantalla anterior (SelectService)
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Reserva confirmada'),
-        content: Text('Ha reservado el horario: $time'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
+  void _handleDateTimeSelection() {
+    final selectedDateTime = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedTime.hour, _selectedTime.minute);
+    widget.onDateTimeSelected?.call(selectedDateTime);
+    Navigator.pop(context);
   }
-
-  
 }

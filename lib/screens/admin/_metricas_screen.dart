@@ -7,10 +7,10 @@ class MetricasScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Metricas'),
+        title: const Text('Metricas'),
         automaticallyImplyLeading: true, // This shows the back arrow
       ),
-      body: Center(
+      body: const Center(
         child: Text('Metricas Screen'),
       ),
     );

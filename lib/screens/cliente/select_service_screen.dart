@@ -1,4 +1,5 @@
 import 'package:aplicacion_taller/screens/cliente/calander.dart';
+import 'package:aplicacion_taller/screens/cliente/confirm_turn_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -133,30 +134,29 @@ class _SeleccionarServicioState extends State<SeleccionarServicio> {
     );
   }
 
-  Widget _buildCalendarButton() {
-    return Container(
-      alignment: Alignment.centerLeft,
-      child: ElevatedButton(
-        onPressed: () async {
-          final selectedDate = await Navigator.push<DateTime?>(
-            context,
-            MaterialPageRoute(
-                builder: (context) => RepairRequestCalendar(
-                      onDateSelected: handleDateSelected,
-                    )),
-          );
+Widget _buildCalendarButton() {
+  return Container(
+    alignment: Alignment.centerLeft,
+    child: ElevatedButton(
+      onPressed: () async {
+        final selectedDate = await Navigator.push<DateTime?>(
+          context,
+          MaterialPageRoute(
+              builder: (context) => RepairRequestCalendar(
+                    onDateTimeSelected: handleDateSelected,
+                  )),
+        );
 
-          if (selectedDate != null) {
-            setState(() {
-              _selectedDate = selectedDate;
-            });
-          }
-        },
-        child: const Text('Seleccionar fecha'),
-      ),
-    );
-  }
-
+        if (selectedDate != null) {
+          setState(() {
+            _selectedDate = selectedDate;
+          });
+        }
+      },
+      child: const Text('Seleccionar fecha'),
+    ),
+  );
+}
   Widget _buildTotalPrice() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -209,15 +209,15 @@ class _SeleccionarServicioState extends State<SeleccionarServicio> {
     String vehicleId = _vehiculoSeleccionado?.id ?? '';
     List<String> serviceIds = _selectedServices.map((s) => s.id).toList();
 
-    if (userId.isEmpty || vehicleId.isEmpty || serviceIds.isEmpty) {
+    if (userId.isEmpty || vehicleId.isEmpty || serviceIds.isEmpty || _selectedDate == null) {
       return;
     }
 
-    await FirebaseFirestore.instance.collection('turns').add({
+    DocumentReference turnRef = await FirebaseFirestore.instance.collection('turns').add({
       'userId': userId,
       'vehicleId': vehicleId,
       'services': serviceIds,
-      'ingreso': _selectedDate,
+      'ingreso': _selectedDate, // Utiliza la fecha seleccionada sin modificar
       'state': 'pendiente',
       'totalPrice': _precioTotal,
     });
@@ -229,6 +229,12 @@ class _SeleccionarServicioState extends State<SeleccionarServicio> {
     );
 
     // Opcional: Regresar a la pantalla anterior o a otra pantalla
-    Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ConfirmTurnScreen(turnId: turnRef.id),
+      ),
+    );
   }
+
 }

@@ -7,10 +7,10 @@ class AutosScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Autos'),
+        title: const Text('Autos'),
         automaticallyImplyLeading: true, // This shows the back arrow
       ),
-      body: Center(
+      body: const Center(
         child: Text('Autos Screen'),
       ),
     );

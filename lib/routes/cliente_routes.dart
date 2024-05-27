@@ -4,6 +4,8 @@ import 'package:aplicacion_taller/screens/cliente/home_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/select_service_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/reparaciones_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/list_screen.dart';
+import 'package:aplicacion_taller/screens/cliente/confirm_turn_screen.dart';
+import 'package:aplicacion_taller/screens/cliente/thank_you_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/register_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/details_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/edit_screen.dart';
@@ -32,6 +34,17 @@ final clienteRoutes = [
   GoRoute(
     path: '/cliente/turns/create',
     builder: (context, state) => const SeleccionarServicio(),
+  ),
+  GoRoute(
+    path: '/cliente/turns/confirm/:turnId',
+    builder: (context, state) {
+      final turnId = state.pathParameters['turnId']!;
+      return ConfirmTurnScreen(turnId: turnId);
+    },
+  ),
+  GoRoute(
+    path: '/cliente/turns/thankYou',
+    builder: (context, state) => ThankYouScreen(),
   ),
   GoRoute(
     path: '/cliente/vehiculo/list',

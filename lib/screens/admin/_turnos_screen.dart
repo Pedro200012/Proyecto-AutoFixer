@@ -15,7 +15,10 @@ class TurnosScreen extends StatelessWidget {
         automaticallyImplyLeading: true, // Esto muestra la flecha de retroceso
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('turns').snapshots(),
+        stream:FirebaseFirestore.instance
+                .collection('turns')
+                .where('confirm', isEqualTo: true) 
+                .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Center(child: Text('Algo salió mal'));
