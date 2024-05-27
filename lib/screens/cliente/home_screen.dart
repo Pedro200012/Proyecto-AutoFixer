@@ -20,7 +20,7 @@ class ClienteHomeScreen extends StatelessWidget {
         ),
         NavigationButton(
           text: 'Mis reparaciones',
-          route: '/sueltas/reparations',
+          route: '/cliente/reparations',
         ),
       ],
     );
