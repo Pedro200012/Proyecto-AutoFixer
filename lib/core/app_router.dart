@@ -1,16 +1,12 @@
-import 'package:aplicacion_taller/entities/rerparations.dart';
-import 'package:aplicacion_taller/screens/admin/solicitudAdmin_screen.dart';
-import 'package:aplicacion_taller/screens/cliente/progress_reparation.dart';
-import 'package:aplicacion_taller/screens/cliente/reparaciones_screen.dart';
 import 'package:go_router/go_router.dart';
 
 // entities
 import 'package:aplicacion_taller/entities/vehicle.dart';
+import 'package:aplicacion_taller/entities/rerparations.dart';
 
 // account
 import 'package:aplicacion_taller/screens/login_screen.dart';
 import 'package:aplicacion_taller/screens/register_screen.dart';
-// import 'package:aplicacion_taller/screens/restore_password_screen.dart';
 
 // home
 import 'package:aplicacion_taller/screens/admin/home_screen.dart';
@@ -18,12 +14,18 @@ import 'package:aplicacion_taller/screens/cliente/home_screen.dart';
 
 // admin
 import 'package:aplicacion_taller/screens/admin/perfiles/home_screen.dart';
+import 'package:aplicacion_taller/screens/admin/solicitudAdmin_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_autos_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_metricas_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_reparaciones_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_turnos_screen.dart';
 
 // cliente
+import 'package:aplicacion_taller/screens/cliente/select_service_screen.dart';
+import 'package:aplicacion_taller/screens/cliente/progress_reparation.dart';
+import 'package:aplicacion_taller/screens/cliente/reparaciones_screen.dart';
+// cliente > vehicle
+import 'package:aplicacion_taller/screens/cliente/vehiculo/list_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/register_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/details_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/edit_screen.dart';
@@ -37,7 +39,7 @@ final GoRouter appRouter = GoRouter(
   routes: [
     // account
     GoRoute(
-      path: '/', // login
+      path: '/',
       builder: (context, state) => const LoginScreen(),
     ),
     GoRoute(
@@ -52,7 +54,7 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/administrador',
-      builder: (context, state) => const AdministradorHomeScreen(),
+      builder: (context, state) => const AdminHomeScreen(),
     ),
 
     // admin
@@ -81,16 +83,24 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const SolicitudAdminScreen(),
     ),
 
+    // cliente
+    GoRoute(
+      path: '/cliente/turns/create',
+      builder: (context, state) => const SeleccionarServicio(),
+    ),
     // cliente > vehiculo
+    GoRoute(
+      path: '/cliente/vehiculo/list',
+      builder: (context, state) => const VehicleListScreen(),
+    ),
     GoRoute(
       path: '/cliente/vehiculo/register',
       builder: (context, state) => const VehicleRegisterScreen(),
     ),
     GoRoute(
       path: '/cliente/vehiculo/details',
-      builder: (context, state) => VehicleDetailsScreen(
-        vehiculo: state.extra as Vehicle,
-      ),
+      builder: (context, state) =>
+          VehicleDetailsScreen(vehiculo: state.extra as Vehicle),
     ),
     GoRoute(
       path: '/cliente/vehiculo/edit',
