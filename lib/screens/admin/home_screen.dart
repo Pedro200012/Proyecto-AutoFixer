@@ -53,18 +53,6 @@ class AdministradorHomeScreen extends StatelessWidget {
                 ),
               );
             },
-            child: Text('Turnos'),
-          ),
-          SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ReparacionesScreen(),
-                ),
-              );
-            },
             child: Text('Reparaciones'),
           ),
           SizedBox(height: 10),

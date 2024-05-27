@@ -16,23 +16,23 @@ class SueltasHomeScreen extends StatelessWidget {
           },
         ),
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: () {
-                context.push('/sueltas/calendar');
-              },
-              child: const Text('Ir al Calendario'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                context.push('/sueltas/repair-form');
-              },
-              child: const Text('Ir al Formulario de Reparación'),
-            ),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     context.push('/sueltas/calendar');
+            //   },
+            //   child: const Text('Ir al Calendario'),
+            // ),
+            // const SizedBox(height: 20),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     context.push('/sueltas/repair-form');
+            //   },
+            //   child: const Text('Ir al Formulario de Reparación'),
+            // ),
           ],
         ),
       ),
