@@ -1,4 +1,3 @@
-import 'package:aplicacion_taller/entities/rerparations.dart';
 import 'package:aplicacion_taller/screens/admin/solicitudAdmin_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/progress_reparation.dart';
 import 'package:aplicacion_taller/screens/cliente/reparaciones_screen.dart';
