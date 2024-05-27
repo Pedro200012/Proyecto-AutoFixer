@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:aplicacion_taller/core/firebase_options.dart';
-import 'package:aplicacion_taller/core/app_router.dart';
+import 'package:aplicacion_taller/routes/app_router.dart';
 import 'package:aplicacion_taller/core/theme_provider.dart';
 
 void main() async {

@@ -1,9 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:aplicacion_taller/entities/vehicle.dart';
-import 'package:aplicacion_taller/screens/cliente/vehiculo/register_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:aplicacion_taller/entities/vehicle.dart';
 
 class VehicleListScreen extends StatefulWidget {
   static const String name = 'home-screen';
@@ -51,27 +51,21 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
             itemCount: vehicles.length,
             itemBuilder: (context, index) {
               final autoAux = vehicles[index];
-              return _buildAutoCard(autoAux);
+              return _buildAutoCard(context, autoAux);
             },
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const VehicleRegisterScreen(
-                      key: null,
-                    )),
-          );
+          context.push('/cliente/vehiculo/register');
         },
         child: const Icon(Icons.add),
       ),
     );
   }
 
-  Widget _buildAutoCard(Vehicle vehiculo) {
+  Widget _buildAutoCard(BuildContext context, Vehicle vehiculo) {
     return Card(
       child: ListTile(
         title: Text(vehiculo.brand),
