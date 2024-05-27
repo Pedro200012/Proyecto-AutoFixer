@@ -22,6 +22,10 @@ class ClienteHomeScreen extends StatelessWidget {
           text: 'Mis reparaciones',
           route: '/cliente/reparations',
         ),
+        NavigationButton(
+          text: 'Solicitar turno (Refactor [WIP])',
+          route: '/cliente/turns/create/refactor',
+        ),
       ],
     );
   }
