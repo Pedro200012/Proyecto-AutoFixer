@@ -1,7 +1,5 @@
 import 'package:aplicacion_taller/screens/cliente/select_service_screen.dart';
-import 'package:aplicacion_taller/screens/cliente/vehiculo/details_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/vehiculo/list_screen.dart';
-import 'package:aplicacion_taller/screens/cliente/vehiculo/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +9,7 @@ class ClienteHomeScreen extends StatelessWidget {
 
   Future<void> _logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
+    // ignore: use_build_context_synchronously
     context.go('/');
   }
 
@@ -18,17 +17,17 @@ class ClienteHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        title: const Text('Home'),
         automaticallyImplyLeading: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             onPressed: () => _logout(context),
           ),
         ],
       ),
       body: ListView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         children: [
           ElevatedButton(
             onPressed: () {
@@ -39,9 +38,9 @@ class ClienteHomeScreen extends StatelessWidget {
                 ),
               );
             },
-            child: Text('Vehiculos'),
+            child: const Text('Vehiculos'),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
               Navigator.push(
@@ -51,7 +50,7 @@ class ClienteHomeScreen extends StatelessWidget {
                 ),
               );
             },
-            child: Text('Selecionar servicio'),
+            child: const Text('Selecionar servicio'),
           ),
           const SizedBox(height: 20),
           ElevatedButton(
