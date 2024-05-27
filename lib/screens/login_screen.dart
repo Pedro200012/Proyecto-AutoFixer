@@ -1,4 +1,3 @@
-import 'package:aplicacion_taller/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
@@ -77,11 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(height: 16.0),
             TextButton(
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RegisterScreen(),
-                    ));
+                context.push('/register');
               },
               child: Text('Don\'t have an account? Register here.'),
             ),

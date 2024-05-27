@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:aplicacion_taller/screens/admin/perfiles/profile_screen.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:aplicacion_taller/entities/user.dart';
 
 class PerfilesScreen extends StatelessWidget {
@@ -39,13 +40,8 @@ class PerfilesScreen extends StatelessWidget {
                   title: Text(user.name),
                   subtitle: Text(user.phone),
                   onTap: () {
-                    // Navigate to profile page
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProfileScreen(user: user),
-                      ),
-                    );
+                    // Navigate to profile page using go_router
+                    context.push('/administrador/perfiles/profile', extra: user);
                   },
                   trailing: IconButton(
                     icon: Icon(Icons.delete),
