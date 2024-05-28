@@ -18,40 +18,66 @@ class DateTimeSelector extends StatefulWidget {
 class _DateTimeSelectorState extends State<DateTimeSelector> {
   DateTime? selectedDate;
   String? selectedHour;
-  List<String> reservedTimes = [];
+  List<String> availableTimes = [];
 
   @override
   void initState() {
     super.initState();
-    // Fetch reserved times when the widget is initialized
-    _fetchReservedTimes(DateTime.now());
   }
 
-  Future<void> _fetchReservedTimes(DateTime date) async {
+  Future<void> _fetchAvailableTimes(DateTime date) async {
     try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('reservations')
-          .doc('${date.year}-${date.month}-${date.day}')
-          .collection('times')
-          .where('reserved', isEqualTo: true)
+      final reservedTurnsSnapshot = await FirebaseFirestore.instance
+          .collection('turns')
+          .where('ingreso', isGreaterThanOrEqualTo: date)
+          .where('ingreso', isLessThan: date.add(Duration(days: 1)))
           .get();
 
-      final times = snapshot.docs.map((doc) {
-        final data = doc.data();
-        if (data.containsKey('time') && data['time'] is String) {
-          final timeString = data['time'] as String;
-          return timeString;
-        } else {
-          return null;
-        }
-      }).where((time) => time != null).cast<String>().toList();
+      final reservedTimes = reservedTurnsSnapshot.docs
+          .map((doc) {
+            final data = doc.data();
+            print("Data: $data");
+            if (data.containsKey('ingreso') && data['ingreso'] is Timestamp) {
+              final Timestamp timestamp = data['ingreso'] as Timestamp;
+              final DateTime dateTime = timestamp.toDate();
+              final hour =
+                  '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+              return hour;
+            } else {
+              return null;
+            }
+          })
+          .where((time) => time != null)
+          .cast<String>()
+          .toList();
+
+      print("Reserved Times: $reservedTimes");
+
+      // Generate available times
+      final List<String> allTimes = [
+        '9:00 AM',
+        '10:00 AM',
+        '11:00 AM',
+        '12:00 PM',
+        '1:00 PM',
+        '2:00 PM',
+        '3:00 PM',
+        '4:00 PM',
+        '5:00 PM',
+        '6:00 PM',
+      ];
+
+      var availableTimes =
+          allTimes.where((time) => !reservedTimes.contains(time)).toList();
+
+      print("Available Times: $availableTimes");
 
       setState(() {
-        reservedTimes = times;
+        this.availableTimes = availableTimes;
       });
     } catch (e) {
       // Handle errors appropriately
-      print("Error fetching reserved times: $e");
+      print("Error fetching available times: $e");
     }
   }
 
@@ -83,7 +109,7 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
                   setState(() {
                     selectedDate = pickedDate;
                     selectedHour = null;
-                    _fetchReservedTimes(selectedDate!);
+                    _fetchAvailableTimes(selectedDate!);
                   });
                   widget.onDateSelected(selectedDate);
                 }
@@ -100,9 +126,8 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
                     });
                     widget.onTimeSelected(selectedHour);
                   },
-                  items: [
-                    ...reservedTimes, // Add reserved times here
-                  ].map<DropdownMenuItem<String>>((String value) {
+                  items: availableTimes
+                      .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
