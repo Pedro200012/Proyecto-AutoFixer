@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class DateTimeSelector extends StatefulWidget {
   final ValueChanged<DateTime?> onDateSelected;
@@ -40,8 +41,8 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
             if (data.containsKey('ingreso') && data['ingreso'] is Timestamp) {
               final Timestamp timestamp = data['ingreso'] as Timestamp;
               final DateTime dateTime = timestamp.toDate();
-              final hour =
-                  '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+              final hour = DateFormat('h:00 a')
+                  .format(dateTime); // Format hour to 'h:00 AM/PM' format
               return hour;
             } else {
               return null;
