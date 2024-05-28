@@ -5,8 +5,8 @@ import 'package:aplicacion_taller/widgets/spaced_column.dart';
 import 'package:aplicacion_taller/widgets/vehicle_selector.dart';
 import 'package:aplicacion_taller/widgets/service_selector.dart';
 import 'package:aplicacion_taller/widgets/date_time_selector.dart';
-import 'package:aplicacion_taller/widgets/loading_screen.dart';
-import 'package:aplicacion_taller/widgets/error_screen.dart';
+import 'package:aplicacion_taller/widgets/loading_body.dart';
+import 'package:aplicacion_taller/widgets/error_body.dart';
 
 class TurnCreate extends StatefulWidget {
   const TurnCreate({super.key});
@@ -105,23 +105,24 @@ class _TurnCreateState extends State<TurnCreate> {
 
   @override
   Widget build(BuildContext context) {
-    final appBar = AppBar(title: const Text('Crear turno'));
-
     return FutureBuilder<void>(
       future: _initialLoadFuture,
       builder: (context, snapshot) {
+        Widget bodyWidget;
+
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return LoadingScreen(appBar: appBar);
-        }
-        if (snapshot.hasError) {
-          return ErrorScreen(
-            appBar: appBar,
+          bodyWidget = const LoadingBody();
+        } else if (snapshot.hasError) {
+          bodyWidget = const ErrorBody(
             errorMessage: 'Error al cargar los datos',
           );
+        } else {
+          bodyWidget = _buildMainContent();
         }
+
         return Scaffold(
-          appBar: appBar,
-          body: _buildMainContent(),
+          appBar: AppBar(title: const Text('Solicitar turno')),
+          body: bodyWidget,
         );
       },
     );
