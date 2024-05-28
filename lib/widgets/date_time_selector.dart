@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DateTimeSelector extends StatefulWidget {
   final ValueChanged<DateTime?> onDateSelected;
   final ValueChanged<String?> onTimeSelected;
 
   const DateTimeSelector({
-    super.key,
+    Key? key,
     required this.onDateSelected,
     required this.onTimeSelected,
-  });
+  }) : super(key: key);
 
   @override
   _DateTimeSelectorState createState() => _DateTimeSelectorState();
@@ -17,6 +18,42 @@ class DateTimeSelector extends StatefulWidget {
 class _DateTimeSelectorState extends State<DateTimeSelector> {
   DateTime? selectedDate;
   String? selectedHour;
+  List<String> reservedTimes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch reserved times when the widget is initialized
+    _fetchReservedTimes(DateTime.now());
+  }
+
+  Future<void> _fetchReservedTimes(DateTime date) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('reservations')
+          .doc('${date.year}-${date.month}-${date.day}')
+          .collection('times')
+          .where('reserved', isEqualTo: true)
+          .get();
+
+      final times = snapshot.docs.map((doc) {
+        final data = doc.data();
+        if (data.containsKey('time') && data['time'] is String) {
+          final timeString = data['time'] as String;
+          return timeString;
+        } else {
+          return null;
+        }
+      }).where((time) => time != null).cast<String>().toList();
+
+      setState(() {
+        reservedTimes = times;
+      });
+    } catch (e) {
+      // Handle errors appropriately
+      print("Error fetching reserved times: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,40 +82,36 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
                 if (pickedDate != null && pickedDate != selectedDate) {
                   setState(() {
                     selectedDate = pickedDate;
+                    selectedHour = null;
+                    _fetchReservedTimes(selectedDate!);
                   });
                   widget.onDateSelected(selectedDate);
                 }
               },
             ),
-            ListTile(
-              title: DropdownButtonFormField<String>(
-                value: selectedHour,
-                onChanged: (value) {
-                  setState(() {
-                    selectedHour = value;
-                  });
-                  widget.onTimeSelected(selectedHour);
-                },
-                items: [
-                  '9:00 AM',
-                  '10:00 AM',
-                  '11:00 AM',
-                  '12:00 PM',
-                  '1:00 PM',
-                  '2:00 PM',
-                  '3:00 PM',
-                  '4:00 PM',
-                  '5:00 PM',
-                  '6:00 PM',
-                ].map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                decoration: const InputDecoration(
-                  labelText: 'Select hour',
-                  border: OutlineInputBorder(),
+            Visibility(
+              visible: selectedDate != null,
+              child: ListTile(
+                title: DropdownButtonFormField<String>(
+                  value: selectedHour,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedHour = value;
+                    });
+                    widget.onTimeSelected(selectedHour);
+                  },
+                  items: [
+                    ...reservedTimes, // Add reserved times here
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  decoration: const InputDecoration(
+                    labelText: 'Select hour',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
               ),
             ),
