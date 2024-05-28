@@ -82,11 +82,23 @@ class _TurnCreateState extends State<TurnCreate> {
   Future<void> _submitTurn() async {
     if (!_isSubmitEnabled()) return;
 
+    final hourParts = _selectedHour!.split(':');
+    final selectedHour = int.parse(hourParts[0]);
+    final selectedMinute = int.parse(hourParts[1]);
+
+    final DateTime ingreso = DateTime(
+      _selectedDate!.year,
+      _selectedDate!.month,
+      _selectedDate!.day,
+      selectedHour,
+      selectedMinute,
+    );
+
     final newTurn = Turn(
       userId: FirebaseAuth.instance.currentUser?.uid ?? '',
       vehicleId: _selectedVehicle!.id,
       services: _selectedServices.map((service) => service.id).toList(),
-      ingreso: _selectedDate!,
+      ingreso: ingreso,
       state: 'pending',
       totalPrice: _getSubtotal(),
     );
