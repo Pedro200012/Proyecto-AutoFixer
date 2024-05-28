@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:aplicacion_taller/entities/vehicle.dart';
 import 'package:aplicacion_taller/entities/service.dart';
+import 'package:aplicacion_taller/widgets/spaced_column.dart';
 import 'package:aplicacion_taller/widgets/vehicle_selector.dart';
 import 'package:aplicacion_taller/widgets/service_selector.dart';
 import 'package:aplicacion_taller/widgets/date_time_selector.dart';
@@ -17,12 +18,12 @@ class _TurnCreateState extends State<TurnCreate> {
   DateTime? selectedDate;
   String? selectedHour;
 
-  double getSubtotal() {
+  double _getSubtotal() {
     return _selectedServices.fold(
         0.0, (total, service) => total + service.price);
   }
 
-  bool isSubmitEnabled() {
+  bool _isSubmitEnabled() {
     bool isVehicleSelected = _selectedVehicle != null;
     bool isServiceSelected = _selectedServices.isNotEmpty;
     bool isDateSelected = selectedDate != null;
@@ -38,7 +39,7 @@ class _TurnCreateState extends State<TurnCreate> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
       child: Text(
-        'Subtotal: \$${getSubtotal().toStringAsFixed(2)}',
+        'Subtotal: \$${_getSubtotal().toStringAsFixed(2)}',
         style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
       ),
     );
@@ -46,7 +47,7 @@ class _TurnCreateState extends State<TurnCreate> {
 
   Widget _buildSubmitButton() {
     return ElevatedButton(
-      onPressed: isSubmitEnabled()
+      onPressed: _isSubmitEnabled()
           ? () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -66,45 +67,21 @@ class _TurnCreateState extends State<TurnCreate> {
       appBar: AppBar(
         title: const Text('Crear turno'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            VehicleSelector(
-              onVehicleSelected: (vehicle) {
-                setState(() {
-                  _selectedVehicle = vehicle;
-                });
-              },
-            ),
-            const SizedBox(height: 16.0),
-            ServiceSelector(
-              onServicesSelected: (services) {
-                setState(() {
-                  _selectedServices = services;
-                });
-              },
-            ),
-            const SizedBox(height: 16.0),
-            DateTimeSelector(
-              onDateSelected: (date) {
-                setState(() {
-                  selectedDate = date;
-                });
-              },
-              onTimeSelected: (time) {
-                setState(() {
-                  selectedHour = time;
-                });
-              },
-            ),
-            const SizedBox(height: 16.0),
-            _buildSubtotal(),
-            const SizedBox(height: 16.0),
-            _buildSubmitButton(),
-          ],
-        ),
+      body: SpacedColumn(
+        children: [
+          VehicleSelector(
+            onVehicleSelected: (x) => setState(() => _selectedVehicle = x),
+          ),
+          ServiceSelector(
+            onServicesSelected: (x) => setState(() => _selectedServices = x),
+          ),
+          DateTimeSelector(
+            onDateSelected: (x) => setState(() => selectedDate = x),
+            onTimeSelected: (x) => setState(() => selectedHour = x),
+          ),
+          _buildSubtotal(),
+          _buildSubmitButton(),
+        ],
       ),
     );
   }
