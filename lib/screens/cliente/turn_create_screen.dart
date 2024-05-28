@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
+import 'package:aplicacion_taller/entities/vehicle.dart';
+import 'package:aplicacion_taller/widgets/vehicle_selector.dart';
+
 class TurnCreate extends StatefulWidget {
   const TurnCreate({super.key});
-
   @override
   State<TurnCreate> createState() => _TurnCreateState();
 }
 
 class _TurnCreateState extends State<TurnCreate> {
-  String selectedVehicle = 'Toyota Corolla';
+  Vehicle? _selectedVehicle;
   List<String> selectedServices = [];
   Map<String, double> servicePrices = {
     'Oil Change': 50.0,
@@ -27,10 +29,15 @@ class _TurnCreateState extends State<TurnCreate> {
   }
 
   bool isSubmitEnabled() {
-    return selectedVehicle.isNotEmpty &&
-        selectedServices.isNotEmpty &&
-        selectedDate != null &&
-        selectedHour != null;
+    bool isVehicleSelected = _selectedVehicle != null;
+    bool isServiceSelected = selectedServices.isNotEmpty;
+    bool isDateSelected = selectedDate != null;
+    bool isHourSelected = selectedHour != null;
+
+    return isVehicleSelected &&
+        isServiceSelected &&
+        isDateSelected &&
+        isHourSelected;
   }
 
   @override
@@ -44,44 +51,12 @@ class _TurnCreateState extends State<TurnCreate> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ExpansionTile(
-              title: const Text(
-                'Select vehicle',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-              initiallyExpanded: true,
-              children: [
-                RadioListTile(
-                  title: const Text('Toyota Corolla'),
-                  value: 'Toyota Corolla',
-                  groupValue: selectedVehicle,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedVehicle = value.toString();
-                    });
-                  },
-                ),
-                RadioListTile(
-                  title: const Text('Honda Civic'),
-                  value: 'Honda Civic',
-                  groupValue: selectedVehicle,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedVehicle = value.toString();
-                    });
-                  },
-                ),
-                RadioListTile(
-                  title: const Text('Ford Mustang'),
-                  value: 'Ford Mustang',
-                  groupValue: selectedVehicle,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedVehicle = value.toString();
-                    });
-                  },
-                ),
-              ],
+            VehicleSelector(
+              onVehicleSelected: (vehicle) {
+                setState(() {
+                  _selectedVehicle = vehicle;
+                });
+              },
             ),
             const SizedBox(height: 16.0),
             ExpansionTile(
