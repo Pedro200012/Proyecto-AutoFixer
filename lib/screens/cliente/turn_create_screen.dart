@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:aplicacion_taller/entities/vehicle.dart';
 import 'package:aplicacion_taller/entities/service.dart';
+import 'package:aplicacion_taller/entities/turn.dart';
 import 'package:aplicacion_taller/widgets/spaced_column.dart';
 import 'package:aplicacion_taller/widgets/vehicle_selector.dart';
 import 'package:aplicacion_taller/widgets/service_selector.dart';
 import 'package:aplicacion_taller/widgets/date_time_selector.dart';
-import 'package:aplicacion_taller/widgets/loading_body.dart';
-import 'package:aplicacion_taller/widgets/error_body.dart';
 
 class TurnCreate extends StatefulWidget {
   const TurnCreate({super.key});
+
   @override
   State<TurnCreate> createState() => _TurnCreateState();
 }
@@ -35,8 +39,10 @@ class _TurnCreateState extends State<TurnCreate> {
     final servicesFuture = ServiceSelector.loadServices();
     final results = await Future.wait([vehiclesFuture, servicesFuture]);
 
-    _vehicles = results[0] as List<Vehicle>;
-    _services = results[1] as List<Service>;
+    setState(() {
+      _vehicles = results[0] as List<Vehicle>;
+      _services = results[1] as List<Service>;
+    });
   }
 
   double _getSubtotal() {
@@ -68,18 +74,40 @@ class _TurnCreateState extends State<TurnCreate> {
 
   Widget _buildSubmitButton() {
     return ElevatedButton(
-      onPressed: _isSubmitEnabled()
-          ? () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Success'),
-                ),
-              );
-              Navigator.pop(context);
-            }
-          : null,
+      onPressed: _isSubmitEnabled() ? _submitTurn : null,
       child: const Text('Submit'),
     );
+  }
+
+  Future<void> _submitTurn() async {
+    if (!_isSubmitEnabled()) return;
+
+    final newTurn = Turn(
+      userId: FirebaseAuth.instance.currentUser?.uid ?? '',
+      vehicleId: _selectedVehicle!.id,
+      services: _selectedServices.map((service) => service.id).toList(),
+      ingreso: _selectedDate!,
+      state: 'pending',
+      totalPrice: _getSubtotal(),
+    );
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('turns')
+          .add(newTurn.toFirestore());
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Turn created successfully'),
+        ),
+      );
+      context.pop();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to create turn'),
+        ),
+      );
+    }
   }
 
   Widget _buildMainContent() {
@@ -111,11 +139,9 @@ class _TurnCreateState extends State<TurnCreate> {
         Widget bodyWidget;
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          bodyWidget = const LoadingBody();
+          bodyWidget = const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          bodyWidget = const ErrorBody(
-            errorMessage: 'Error al cargar los datos',
-          );
+          bodyWidget = const Center(child: Text('Error al cargar los datos'));
         } else {
           bodyWidget = _buildMainContent();
         }
