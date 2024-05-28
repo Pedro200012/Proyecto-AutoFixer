@@ -19,12 +19,8 @@ class AdminHomeScreen extends StatelessWidget {
           route: '/administrador/turnos',
         ),
         NavigationButton(
-          text: 'Reparaciones',
-          route: '/administrador/reparaciones',
-        ),
-        NavigationButton(
-          text: 'Vehiculos',
-          route: '/administrador/autos',
+          text: 'Servicios',
+          route: '/administrador/servicios',
         ),
         NavigationButton(
           text: 'Metricas',

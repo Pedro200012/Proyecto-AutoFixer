@@ -3,7 +3,7 @@ import 'package:aplicacion_taller/screens/admin/home_screen.dart';
 import 'package:aplicacion_taller/screens/admin/perfiles/home_screen.dart';
 import 'package:aplicacion_taller/screens/admin/perfiles/profile_screen.dart';
 import 'package:aplicacion_taller/screens/admin/solicitudAdmin_screen.dart';
-import 'package:aplicacion_taller/screens/admin/_autos_screen.dart';
+import 'package:aplicacion_taller/screens/admin/_servicios_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_metricas_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_reparaciones_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_turnos_screen.dart';
@@ -32,8 +32,8 @@ final adminRoutes = [
     builder: (context, state) => const ReparacionesScreen(),
   ),
   GoRoute(
-    path: '/administrador/autos',
-    builder: (context, state) => const AutosScreen(),
+    path: '/administrador/servicios',
+    builder: (context, state) => const ServiciosScreen(),
   ),
   GoRoute(
     path: '/administrador/metricas',
