@@ -15,8 +15,27 @@ class TurnCreate extends StatefulWidget {
 class _TurnCreateState extends State<TurnCreate> {
   Vehicle? _selectedVehicle;
   Set<Service> _selectedServices = {};
-  DateTime? selectedDate;
-  String? selectedHour;
+  DateTime? _selectedDate;
+  String? _selectedHour;
+
+  late Future<void> _initialLoadFuture;
+  List<Vehicle>? _vehicles;
+  List<Service>? _services;
+
+  @override
+  void initState() {
+    super.initState();
+    _initialLoadFuture = _loadInitialData();
+  }
+
+  Future<void> _loadInitialData() async {
+    final vehiclesFuture = VehicleSelector.loadVehicles();
+    final servicesFuture = ServiceSelector.loadServices();
+    final results = await Future.wait([vehiclesFuture, servicesFuture]);
+
+    _vehicles = results[0] as List<Vehicle>;
+    _services = results[1] as List<Service>;
+  }
 
   double _getSubtotal() {
     return _selectedServices.fold(
@@ -26,8 +45,8 @@ class _TurnCreateState extends State<TurnCreate> {
   bool _isSubmitEnabled() {
     bool isVehicleSelected = _selectedVehicle != null;
     bool isServiceSelected = _selectedServices.isNotEmpty;
-    bool isDateSelected = selectedDate != null;
-    bool isHourSelected = selectedHour != null;
+    bool isDateSelected = _selectedDate != null;
+    bool isHourSelected = _selectedHour != null;
 
     return isVehicleSelected &&
         isServiceSelected &&
@@ -61,28 +80,54 @@ class _TurnCreateState extends State<TurnCreate> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Scaffold _buildScaffold(Widget body) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Crear turno'),
       ),
-      body: SpacedColumn(
-        children: [
-          VehicleSelector(
-            onVehicleSelected: (x) => setState(() => _selectedVehicle = x),
+      body: body,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<void>(
+      future: _initialLoadFuture,
+      builder: (context, snapshot) {
+        bool isLoading = snapshot.connectionState == ConnectionState.waiting;
+        if (isLoading) {
+          return _buildScaffold(
+            const Center(child: CircularProgressIndicator()),
+          );
+        }
+        bool hasError = snapshot.hasError;
+        if (hasError) {
+          return _buildScaffold(
+            const Center(child: Text('Error al cargar los datos')),
+          );
+        }
+        return _buildScaffold(
+          SpacedColumn(
+            children: [
+              VehicleSelector(
+                vehicles: _vehicles!,
+                onVehicleSelected: (x) => setState(() => _selectedVehicle = x),
+              ),
+              ServiceSelector(
+                services: _services!,
+                onServicesSelected: (x) =>
+                    setState(() => _selectedServices = x),
+              ),
+              DateTimeSelector(
+                onDateSelected: (x) => setState(() => _selectedDate = x),
+                onTimeSelected: (x) => setState(() => _selectedHour = x),
+              ),
+              _buildSubtotal(),
+              _buildSubmitButton(),
+            ],
           ),
-          ServiceSelector(
-            onServicesSelected: (x) => setState(() => _selectedServices = x),
-          ),
-          DateTimeSelector(
-            onDateSelected: (x) => setState(() => selectedDate = x),
-            onTimeSelected: (x) => setState(() => selectedHour = x),
-          ),
-          _buildSubtotal(),
-          _buildSubmitButton(),
-        ],
-      ),
+        );
+      },
     );
   }
 }
