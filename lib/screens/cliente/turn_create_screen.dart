@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:aplicacion_taller/entities/vehicle.dart';
+import 'package:aplicacion_taller/entities/service.dart';
 import 'package:aplicacion_taller/widgets/vehicle_selector.dart';
+import 'package:aplicacion_taller/widgets/service_selector.dart';
 
 class TurnCreate extends StatefulWidget {
   const TurnCreate({super.key});
@@ -11,26 +13,19 @@ class TurnCreate extends StatefulWidget {
 
 class _TurnCreateState extends State<TurnCreate> {
   Vehicle? _selectedVehicle;
-  List<String> selectedServices = [];
-  Map<String, double> servicePrices = {
-    'Oil Change': 50.0,
-    'Brake Repair': 100.0,
-    'Engine Tune-up': 150.0,
-  };
+  Set<Service> _selectedServices = {};
+
   DateTime? selectedDate;
   String? selectedHour;
 
   double getSubtotal() {
-    double subtotal = 0.0;
-    selectedServices.forEach((service) {
-      subtotal += servicePrices[service]!;
-    });
-    return subtotal;
+    return _selectedServices.fold(
+        0.0, (total, service) => total + service.price);
   }
 
   bool isSubmitEnabled() {
     bool isVehicleSelected = _selectedVehicle != null;
-    bool isServiceSelected = selectedServices.isNotEmpty;
+    bool isServiceSelected = _selectedServices.isNotEmpty;
     bool isDateSelected = selectedDate != null;
     bool isHourSelected = selectedHour != null;
 
@@ -59,37 +54,12 @@ class _TurnCreateState extends State<TurnCreate> {
               },
             ),
             const SizedBox(height: 16.0),
-            ExpansionTile(
-              title: const Text(
-                'Select service',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-              initiallyExpanded: true,
-              children: [
-                for (var service in servicePrices.keys)
-                  CheckboxListTile(
-                    title: Row(
-                      children: [
-                        Text(service),
-                        const Spacer(),
-                        Text(
-                          '\$${servicePrices[service]!.toStringAsFixed(2)}',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    value: selectedServices.contains(service),
-                    onChanged: (checked) {
-                      setState(() {
-                        if (checked!) {
-                          selectedServices.add(service);
-                        } else {
-                          selectedServices.remove(service);
-                        }
-                      });
-                    },
-                  ),
-              ],
+            ServiceSelector(
+              onServicesSelected: (services) {
+                setState(() {
+                  _selectedServices = services;
+                });
+              },
             ),
             const SizedBox(height: 16.0),
             ExpansionTile(
