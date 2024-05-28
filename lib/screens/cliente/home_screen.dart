@@ -8,23 +8,27 @@ class ClienteHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const HomeScreenBase(
-      title: 'Home',
+      title: 'Home: Cliente',
       buttons: [
         NavigationButton(
           text: 'Solicitar turno',
           route: '/cliente/turns/create',
+          icon: Icon(Icons.calendar_month),
         ),
         NavigationButton(
           text: 'Mis vehiculos',
           route: '/cliente/vehiculo/list',
+          icon: Icon(Icons.car_rental),
         ),
         NavigationButton(
           text: 'Mis reparaciones',
           route: '/cliente/reparations',
+          icon: Icon(Icons.build),
         ),
         NavigationButton(
-          text: 'Solicitar turno (sin \'reservations\')',
+          text: 'Solicitar turno (2)',
           route: '/cliente/turns/create/refactor',
+          icon: Icon(Icons.calendar_month),
         ),
       ],
     );
