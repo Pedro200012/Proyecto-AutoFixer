@@ -27,7 +27,7 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
     availableTimes = Future.value([]);
   }
 
-  Future<List<String>> _fetchAvailableTimes(DateTime date) async {
+  Future<List<String>> _fetchReservedTimes(DateTime date) async {
     try {
       final reservedTurnsSnapshot = await FirebaseFirestore.instance
           .collection('turns')
@@ -45,17 +45,18 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
         return DateFormat('HH:00').format(dateTime);
       }).toList();
 
-      final List<String> allTimes = List.generate(
-          10, (index) => '${(9 + index).toString().padLeft(2, '0')}:00');
-
-      final availableTimes =
-          allTimes.where((time) => !reservedTimes.contains(time)).toList();
-
-      return availableTimes;
+      return reservedTimes;
     } catch (e) {
-      print("Error fetching available times: $e");
+      print("Error fetching reserved times: $e");
       return [];
     }
+  }
+
+  Future<List<String>> _calculateAvailableTimes(DateTime date) async {
+    final List<String> allTimes = List.generate(
+        10, (index) => '${(9 + index).toString().padLeft(2, '0')}:00');
+    final reservedTimes = await _fetchReservedTimes(date);
+    return allTimes.where((time) => !reservedTimes.contains(time)).toList();
   }
 
   Widget _buildSelectDate(BuildContext context) {
@@ -75,7 +76,7 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
           setState(() {
             selectedDate = pickedDate;
             selectedHour = null;
-            availableTimes = _fetchAvailableTimes(selectedDate!);
+            availableTimes = _calculateAvailableTimes(selectedDate!);
           });
           widget.onDateSelected(selectedDate);
         }
