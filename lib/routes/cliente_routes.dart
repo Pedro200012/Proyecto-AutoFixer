@@ -12,6 +12,7 @@ import 'package:aplicacion_taller/screens/cliente/vehiculo/edit_screen.dart';
 import 'package:aplicacion_taller/screens/cliente/calander.dart';
 import 'package:aplicacion_taller/screens/cliente/repair_form.dart';
 
+import 'package:aplicacion_taller/screens/cliente/turn_create_screen.dart';
 import 'package:aplicacion_taller/entities/vehicle.dart';
 
 final clienteRoutes = [
@@ -63,5 +64,10 @@ final clienteRoutes = [
     path: '/cliente/vehiculo/edit',
     builder: (context, state) =>
         VehicleEditScreen(vehicle: state.extra as Vehicle),
+  ),
+  // WIP
+  GoRoute(
+    path: '/cliente/turns/create/refactor',
+    builder: (context, state) => TurnCreate(),
   ),
 ];
