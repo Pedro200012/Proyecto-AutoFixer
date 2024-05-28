@@ -37,7 +37,6 @@ class HomeScreenBase extends StatelessWidget {
     return Scaffold(
       appBar: _buildAppBar(context),
       body: ListView.separated(
-        padding: const EdgeInsets.all(16.0),
         itemCount: buttons.length,
         itemBuilder: (context, index) => buttons[index],
         separatorBuilder: (context, index) => const SizedBox(height: 10),

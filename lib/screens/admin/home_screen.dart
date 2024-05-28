@@ -8,23 +8,27 @@ class AdminHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const HomeScreenBase(
-      title: 'Home',
+      title: 'Home: Admin',
       buttons: [
         NavigationButton(
-          text: 'Usuarios',
-          route: '/administrador/perfiles',
+          text: 'Metricas',
+          route: '/administrador/metricas',
+          icon: Icon(Icons.bar_chart),
         ),
         NavigationButton(
           text: 'Turnos',
           route: '/administrador/turnos',
+          icon: Icon(Icons.calendar_month),
+        ),
+        NavigationButton(
+          text: 'Usuarios',
+          route: '/administrador/perfiles',
+          icon: Icon(Icons.person),
         ),
         NavigationButton(
           text: 'Servicios',
           route: '/administrador/servicios',
-        ),
-        NavigationButton(
-          text: 'Metricas',
-          route: '/administrador/metricas',
+          icon: Icon(Icons.local_hospital),
         ),
       ],
     );
