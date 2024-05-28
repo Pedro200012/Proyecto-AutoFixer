@@ -1,9 +1,12 @@
+import 'package:aplicacion_taller/entities/service.dart';
+import 'package:aplicacion_taller/screens/admin/perfiles/servicios/add_services_screen.dart';
+import 'package:aplicacion_taller/screens/admin/perfiles/servicios/service_detail_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:aplicacion_taller/screens/admin/home_screen.dart';
 import 'package:aplicacion_taller/screens/admin/perfiles/home_screen.dart';
 import 'package:aplicacion_taller/screens/admin/perfiles/profile_screen.dart';
 import 'package:aplicacion_taller/screens/admin/solicitudAdmin_screen.dart';
-import 'package:aplicacion_taller/screens/admin/_servicios_screen.dart';
+import 'package:aplicacion_taller/screens/admin/perfiles/servicios/_servicios_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_metricas_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_reparaciones_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_turnos_screen.dart';
@@ -42,5 +45,13 @@ final adminRoutes = [
   GoRoute(
     path: '/administrador/solicitud',
     builder: (context, state) => const SolicitudAdminScreen(),
+  ),
+  // GoRoute(
+  //   path: '/administrador/servicios-detail',
+  //   builder: (context, state) => ServicieDetailScreen(service: state.extra as Service),
+  // ),
+  GoRoute(
+    path: '/administrador/add-service',
+    builder: (context, state) => const AddServices(),
   ),
 ];
