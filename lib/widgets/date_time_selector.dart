@@ -19,15 +19,14 @@ class DateTimeSelector extends StatefulWidget {
 class _DateTimeSelectorState extends State<DateTimeSelector> {
   DateTime? selectedDate;
   String? selectedHour;
-
-  List<String> availableTimes = [];
+  late Future<List<String>> availableTimes = Future.value([]);
 
   @override
   void initState() {
     super.initState();
   }
 
-  Future<void> _fetchAvailableTimes(DateTime date) async {
+  Future<List<String>> _fetchAvailableTimes(DateTime date) async {
     try {
       final reservedTurnsSnapshot = await FirebaseFirestore.instance
           .collection('turns')
@@ -73,12 +72,11 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
 
       print("Available Times: $availableTimes");
 
-      setState(() {
-        this.availableTimes = availableTimes;
-      });
+      return availableTimes;
     } catch (e) {
       // Handle errors appropriately
       print("Error fetching available times: $e");
+      return [];
     }
   }
 
@@ -99,7 +97,7 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
           setState(() {
             selectedDate = pickedDate;
             selectedHour = null;
-            _fetchAvailableTimes(selectedDate!);
+            availableTimes = _fetchAvailableTimes(selectedDate!);
           });
           widget.onDateSelected(selectedDate);
         }
@@ -110,26 +108,42 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
   Widget _buildSelectHour() {
     return Visibility(
       visible: selectedDate != null,
-      child: ListTile(
-        title: DropdownButtonFormField<String>(
-          value: selectedHour,
-          onChanged: (value) {
-            setState(() {
-              selectedHour = value;
-            });
-            widget.onTimeSelected(selectedHour);
-          },
-          items: availableTimes.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
+      child: FutureBuilder<List<String>>(
+        future: availableTimes,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // While data is loading
+            return const Center(child: CircularProgressIndicator()); // or any other loading indicator
+          } else if (snapshot.hasError) {
+            // If there's an error
+            return Text('Error: ${snapshot.error}');
+          } else {
+            // If data is successfully fetched
+            List<String> availableTimes = snapshot.data ?? [];
+            return ListTile(
+              title: DropdownButtonFormField<String>(
+                value: selectedHour,
+                onChanged: (value) {
+                  setState(() {
+                    selectedHour = value;
+                  });
+                  widget.onTimeSelected(selectedHour);
+                },
+                items: availableTimes
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                decoration: const InputDecoration(
+                  labelText: 'Select hour',
+                  border: OutlineInputBorder(),
+                ),
+              ),
             );
-          }).toList(),
-          decoration: const InputDecoration(
-            labelText: 'Select hour',
-            border: OutlineInputBorder(),
-          ),
-        ),
+          }
+        },
       ),
     );
   }
