@@ -34,6 +34,32 @@ class _TurnCreateState extends State<TurnCreate> {
         isHourSelected;
   }
 
+  Widget _buildSubtotal() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+      child: Text(
+        'Subtotal: \$${getSubtotal().toStringAsFixed(2)}',
+        style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return ElevatedButton(
+      onPressed: isSubmitEnabled()
+          ? () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Success'),
+                ),
+              );
+              Navigator.pop(context);
+            }
+          : null,
+      child: const Text('Submit'),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,28 +100,9 @@ class _TurnCreateState extends State<TurnCreate> {
               },
             ),
             const SizedBox(height: 16.0),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: Text(
-                'Subtotal: \$${getSubtotal().toStringAsFixed(2)}',
-                style: const TextStyle(
-                    fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-            ),
+            _buildSubtotal(),
             const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: isSubmitEnabled()
-                  ? () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Success'),
-                        ),
-                      );
-                      Navigator.pop(context);
-                    }
-                  : null,
-              child: const Text('Submit'),
-            ),
+            _buildSubmitButton(),
           ],
         ),
       ),
