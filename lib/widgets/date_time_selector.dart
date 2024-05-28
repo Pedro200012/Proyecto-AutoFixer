@@ -41,8 +41,8 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
             if (data.containsKey('ingreso') && data['ingreso'] is Timestamp) {
               final Timestamp timestamp = data['ingreso'] as Timestamp;
               final DateTime dateTime = timestamp.toDate();
-              final hour = DateFormat('h:00 a')
-                  .format(dateTime); // Format hour to 'h:00 AM/PM' format
+              final hour = DateFormat('HH:00')
+                  .format(dateTime); // Format hour to 'HH:00' (military format)
               return hour;
             } else {
               return null;
@@ -56,16 +56,16 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
 
       // Generate available times
       final List<String> allTimes = [
-        '9:00 AM',
-        '10:00 AM',
-        '11:00 AM',
-        '12:00 PM',
-        '1:00 PM',
-        '2:00 PM',
-        '3:00 PM',
-        '4:00 PM',
-        '5:00 PM',
-        '6:00 PM',
+        '09:00',
+        '10:00',
+        '11:00',
+        '12:00',
+        '13:00',
+        '14:00',
+        '15:00',
+        '16:00',
+        '17:00',
+        '18:00',
       ];
 
       var availableTimes =
