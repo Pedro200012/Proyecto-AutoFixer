@@ -5,6 +5,8 @@ import 'package:aplicacion_taller/widgets/spaced_column.dart';
 import 'package:aplicacion_taller/widgets/vehicle_selector.dart';
 import 'package:aplicacion_taller/widgets/service_selector.dart';
 import 'package:aplicacion_taller/widgets/date_time_selector.dart';
+import 'package:aplicacion_taller/widgets/loading_screen.dart';
+import 'package:aplicacion_taller/widgets/error_screen.dart';
 
 class TurnCreate extends StatefulWidget {
   const TurnCreate({super.key});
@@ -80,52 +82,46 @@ class _TurnCreateState extends State<TurnCreate> {
     );
   }
 
-  Scaffold _buildScaffold(Widget body) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Crear turno'),
-      ),
-      body: body,
+  Widget _buildMainContent() {
+    return SpacedColumn(
+      children: [
+        VehicleSelector(
+          vehicles: _vehicles!,
+          onVehicleSelected: (x) => setState(() => _selectedVehicle = x),
+        ),
+        ServiceSelector(
+          services: _services!,
+          onServicesSelected: (x) => setState(() => _selectedServices = x),
+        ),
+        DateTimeSelector(
+          onDateSelected: (x) => setState(() => _selectedDate = x),
+          onTimeSelected: (x) => setState(() => _selectedHour = x),
+        ),
+        _buildSubtotal(),
+        _buildSubmitButton(),
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(title: const Text('Crear turno'));
+
     return FutureBuilder<void>(
       future: _initialLoadFuture,
       builder: (context, snapshot) {
-        bool isLoading = snapshot.connectionState == ConnectionState.waiting;
-        if (isLoading) {
-          return _buildScaffold(
-            const Center(child: CircularProgressIndicator()),
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return LoadingScreen(appBar: appBar);
+        }
+        if (snapshot.hasError) {
+          return ErrorScreen(
+            appBar: appBar,
+            errorMessage: 'Error al cargar los datos',
           );
         }
-        bool hasError = snapshot.hasError;
-        if (hasError) {
-          return _buildScaffold(
-            const Center(child: Text('Error al cargar los datos')),
-          );
-        }
-        return _buildScaffold(
-          SpacedColumn(
-            children: [
-              VehicleSelector(
-                vehicles: _vehicles!,
-                onVehicleSelected: (x) => setState(() => _selectedVehicle = x),
-              ),
-              ServiceSelector(
-                services: _services!,
-                onServicesSelected: (x) =>
-                    setState(() => _selectedServices = x),
-              ),
-              DateTimeSelector(
-                onDateSelected: (x) => setState(() => _selectedDate = x),
-                onTimeSelected: (x) => setState(() => _selectedHour = x),
-              ),
-              _buildSubtotal(),
-              _buildSubmitButton(),
-            ],
-          ),
+        return Scaffold(
+          appBar: appBar,
+          body: _buildMainContent(),
         );
       },
     );
