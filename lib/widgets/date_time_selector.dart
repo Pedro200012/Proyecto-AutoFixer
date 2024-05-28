@@ -19,6 +19,7 @@ class DateTimeSelector extends StatefulWidget {
 class _DateTimeSelectorState extends State<DateTimeSelector> {
   DateTime? selectedDate;
   String? selectedHour;
+
   List<String> availableTimes = [];
 
   @override
@@ -41,8 +42,7 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
             if (data.containsKey('ingreso') && data['ingreso'] is Timestamp) {
               final Timestamp timestamp = data['ingreso'] as Timestamp;
               final DateTime dateTime = timestamp.toDate();
-              final hour = DateFormat('HH:00')
-                  .format(dateTime); // Format hour to 'HH:00' (military format)
+              final hour = DateFormat('HH:00').format(dateTime);
               return hour;
             } else {
               return null;
@@ -82,6 +82,58 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
     }
   }
 
+  Widget _buildSelectDate(BuildContext context) {
+    return ListTile(
+      title: Text(selectedDate == null
+          ? 'Select date'
+          : 'Selected date: ${selectedDate.toString().substring(0, 10)}'),
+      trailing: const Icon(Icons.calendar_today),
+      onTap: () async {
+        final DateTime? pickedDate = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime.now(),
+          lastDate: DateTime(DateTime.now().year + 1),
+        );
+        if (pickedDate != null && pickedDate != selectedDate) {
+          setState(() {
+            selectedDate = pickedDate;
+            selectedHour = null;
+            _fetchAvailableTimes(selectedDate!);
+          });
+          widget.onDateSelected(selectedDate);
+        }
+      },
+    );
+  }
+
+  Widget _buildSelectHour() {
+    return Visibility(
+      visible: selectedDate != null,
+      child: ListTile(
+        title: DropdownButtonFormField<String>(
+          value: selectedHour,
+          onChanged: (value) {
+            setState(() {
+              selectedHour = value;
+            });
+            widget.onTimeSelected(selectedHour);
+          },
+          items: availableTimes.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          decoration: const InputDecoration(
+            labelText: 'Select hour',
+            border: OutlineInputBorder(),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
@@ -94,53 +146,8 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ListTile(
-              title: Text(selectedDate == null
-                  ? 'Select date'
-                  : 'Selected date: ${selectedDate.toString().substring(0, 10)}'),
-              trailing: const Icon(Icons.calendar_today),
-              onTap: () async {
-                final DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime(DateTime.now().year + 1),
-                );
-                if (pickedDate != null && pickedDate != selectedDate) {
-                  setState(() {
-                    selectedDate = pickedDate;
-                    selectedHour = null;
-                    _fetchAvailableTimes(selectedDate!);
-                  });
-                  widget.onDateSelected(selectedDate);
-                }
-              },
-            ),
-            Visibility(
-              visible: selectedDate != null,
-              child: ListTile(
-                title: DropdownButtonFormField<String>(
-                  value: selectedHour,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedHour = value;
-                    });
-                    widget.onTimeSelected(selectedHour);
-                  },
-                  items: availableTimes
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  decoration: const InputDecoration(
-                    labelText: 'Select hour',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-            ),
+            _buildSelectDate(context),
+            _buildSelectHour(),
           ],
         ),
       ],
