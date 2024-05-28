@@ -113,6 +113,10 @@ class _TurnCreateState extends State<TurnCreate> {
   Widget _buildMainContent() {
     return SpacedColumn(
       children: [
+        DateTimeSelector(
+          onDateSelected: (x) => setState(() => _selectedDate = x),
+          onTimeSelected: (x) => setState(() => _selectedHour = x),
+        ),
         VehicleSelector(
           vehicles: _vehicles!,
           onVehicleSelected: (x) => setState(() => _selectedVehicle = x),
@@ -120,10 +124,6 @@ class _TurnCreateState extends State<TurnCreate> {
         ServiceSelector(
           services: _services!,
           onServicesSelected: (x) => setState(() => _selectedServices = x),
-        ),
-        DateTimeSelector(
-          onDateSelected: (x) => setState(() => _selectedDate = x),
-          onTimeSelected: (x) => setState(() => _selectedHour = x),
         ),
         _buildSubtotal(),
         _buildSubmitButton(),

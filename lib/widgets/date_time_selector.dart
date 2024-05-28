@@ -32,7 +32,7 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
       final reservedTurnsSnapshot = await FirebaseFirestore.instance
           .collection('turns')
           .where('ingreso', isGreaterThanOrEqualTo: date)
-          .where('ingreso', isLessThan: date.add(Duration(days: 1)))
+          .where('ingreso', isLessThan: date.add(const Duration(days: 1)))
           .get();
 
       final reservedTimes = reservedTurnsSnapshot.docs
@@ -84,43 +84,76 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
     );
   }
 
+  void _showAvailableTimesDialog(BuildContext context, List<String> times) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Hour'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: times.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Text(times[index]),
+                  onTap: () {
+                    setState(() {
+                      selectedHour = times[index];
+                    });
+                    widget.onTimeSelected(selectedHour);
+                    Navigator.pop(context); // Close the dialog
+                  },
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildSelectHour() {
-    return Visibility(
-      visible: selectedDate != null,
-      child: FutureBuilder<List<String>>(
-        future: availableTimes,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            final availableTimes = snapshot.data ?? [];
-            return ListTile(
-              title: DropdownButtonFormField<String>(
-                value: selectedHour,
-                onChanged: (value) {
-                  setState(() {
-                    selectedHour = value;
-                  });
-                  widget.onTimeSelected(selectedHour);
-                },
-                items: availableTimes
-                    .map<DropdownMenuItem<String>>(
-                        (value) => DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            ))
-                    .toList(),
-                decoration: const InputDecoration(
-                  labelText: 'Select hour',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            );
-          }
-        },
-      ),
+    return FutureBuilder<List<String>>(
+      future: availableTimes,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          final availableTimes = snapshot.data ?? [];
+          return ListTile(
+            title: Text(selectedHour == null
+                ? 'Select hour'
+                : 'Selected hour: $selectedHour'),
+            trailing: Icon(Icons.access_time,
+                color: selectedDate == null
+                    ? Colors.grey
+                    : Theme.of(context).iconTheme.color),
+            onTap: selectedDate == null
+                ? null
+                : () {
+                    if (availableTimes.isNotEmpty) {
+                      _showAvailableTimesDialog(context, availableTimes);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('No available times'),
+                      ));
+                    }
+                  },
+          );
+        }
+      },
     );
   }
 

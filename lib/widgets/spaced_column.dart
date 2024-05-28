@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 class SpacedColumn extends StatelessWidget {
   final List<Widget> children;
 
-  const SpacedColumn({super.key, required this.children});
+  const SpacedColumn({Key? key, required this.children}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: children
