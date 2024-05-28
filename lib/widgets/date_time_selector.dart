@@ -19,11 +19,12 @@ class DateTimeSelector extends StatefulWidget {
 class _DateTimeSelectorState extends State<DateTimeSelector> {
   DateTime? selectedDate;
   String? selectedHour;
-  late Future<List<String>> availableTimes = Future.value([]);
+  late Future<List<String>> availableTimes;
 
   @override
   void initState() {
     super.initState();
+    availableTimes = Future.value([]);
   }
 
   Future<List<String>> _fetchAvailableTimes(DateTime date) async {
@@ -35,46 +36,23 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
           .get();
 
       final reservedTimes = reservedTurnsSnapshot.docs
-          .map((doc) {
-            final data = doc.data();
-            print("Data: $data");
-            if (data.containsKey('ingreso') && data['ingreso'] is Timestamp) {
-              final Timestamp timestamp = data['ingreso'] as Timestamp;
-              final DateTime dateTime = timestamp.toDate();
-              final hour = DateFormat('HH:00').format(dateTime);
-              return hour;
-            } else {
-              return null;
-            }
-          })
-          .where((time) => time != null)
-          .cast<String>()
-          .toList();
+          .map((doc) => doc.data())
+          .where((data) =>
+              data.containsKey('ingreso') && data['ingreso'] is Timestamp)
+          .map<String>((data) {
+        final Timestamp timestamp = data['ingreso'] as Timestamp;
+        final DateTime dateTime = timestamp.toDate();
+        return DateFormat('HH:00').format(dateTime);
+      }).toList();
 
-      print("Reserved Times: $reservedTimes");
+      final List<String> allTimes = List.generate(
+          10, (index) => '${(9 + index).toString().padLeft(2, '0')}:00');
 
-      // Generate available times
-      final List<String> allTimes = [
-        '09:00',
-        '10:00',
-        '11:00',
-        '12:00',
-        '13:00',
-        '14:00',
-        '15:00',
-        '16:00',
-        '17:00',
-        '18:00',
-      ];
-
-      var availableTimes =
+      final availableTimes =
           allTimes.where((time) => !reservedTimes.contains(time)).toList();
-
-      print("Available Times: $availableTimes");
 
       return availableTimes;
     } catch (e) {
-      // Handle errors appropriately
       print("Error fetching available times: $e");
       return [];
     }
@@ -84,7 +62,7 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
     return ListTile(
       title: Text(selectedDate == null
           ? 'Select date'
-          : 'Selected date: ${selectedDate.toString().substring(0, 10)}'),
+          : 'Selected date: ${DateFormat('yyyy-MM-dd').format(selectedDate!)}'),
       trailing: const Icon(Icons.calendar_today),
       onTap: () async {
         final DateTime? pickedDate = await showDatePicker(
@@ -112,14 +90,11 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
         future: availableTimes,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            // While data is loading
-            return const Center(child: CircularProgressIndicator()); // or any other loading indicator
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            // If there's an error
             return Text('Error: ${snapshot.error}');
           } else {
-            // If data is successfully fetched
-            List<String> availableTimes = snapshot.data ?? [];
+            final availableTimes = snapshot.data ?? [];
             return ListTile(
               title: DropdownButtonFormField<String>(
                 value: selectedHour,
@@ -130,12 +105,12 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
                   widget.onTimeSelected(selectedHour);
                 },
                 items: availableTimes
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
+                    .map<DropdownMenuItem<String>>(
+                        (value) => DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            ))
+                    .toList(),
                 decoration: const InputDecoration(
                   labelText: 'Select hour',
                   border: OutlineInputBorder(),
