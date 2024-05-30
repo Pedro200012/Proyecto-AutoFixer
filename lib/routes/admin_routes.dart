@@ -53,7 +53,7 @@ final adminRoutes = [
   // ),
   GoRoute(
     path: '/administrador/add-service',
-    builder: (context, state) => const AddServices(),
+    builder: (context, state) => AddServiceScreen(),
   ),
   GoRoute(
     path: '/administrador/business-hours',
