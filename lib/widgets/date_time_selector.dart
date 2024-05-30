@@ -189,6 +189,75 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
     );
   }
 
+  void _showBusinessHoursDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: EdgeInsets.all(20),
+            child: businessHours != null
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _buildBusinessHoursList(),
+                  )
+                : Center(
+                    child: CircularProgressIndicator(),
+                  ),
+          ),
+        );
+      },
+    );
+  }
+
+  List<Widget> _buildBusinessHoursList() {
+    List<Widget> list = [];
+
+    if (businessHours != null) {
+      // Define a list of weekdays in the correct order
+      List<String> weekdays = DateFormat.E().dateSymbols.WEEKDAYS;
+
+      // Sort days of the week according to their order in weekdays list
+      List<String> sortedDays =
+          businessHours!.keys.where((day) => weekdays.contains(day)).toList()
+            ..sort((a, b) {
+              // Get the index of each day in the weekdays list
+              int indexA = weekdays.indexOf(a);
+              int indexB = weekdays.indexOf(b);
+
+              // Adjust the comparison to start with Monday (index 1) instead of Sunday (index 0)
+              if (indexA == 0) indexA = 7;
+              if (indexB == 0) indexB = 7;
+
+              return indexA.compareTo(indexB);
+            });
+
+      for (var day in sortedDays) {
+        bool isOpen = businessHours![day]['open'] ?? false;
+
+        String openTime = businessHours![day]['openTime'] ?? '';
+        String closeTime = businessHours![day]['closeTime'] ?? '';
+
+        String hoursText = isOpen ? '$openTime - $closeTime' : 'CLOSED';
+
+        list.add(ListTile(
+          title: Text(
+            '$day: $hoursText',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: isOpen ? Colors.black : Colors.red,
+            ),
+          ),
+        ));
+      }
+    } else {
+      // Handle the case when businessHours is null
+      list.add(Text('Business hours data is not available.'));
+    }
+
+    return list;
+  }
+
   Widget _buildSelectHour() {
     return FutureBuilder<List<String>>(
       future: availableTimes,
@@ -236,6 +305,13 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            ListTile(
+              title: Text('Business Hours',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              onTap: () {
+                _showBusinessHoursDialog(context);
+              },
+            ),
             _buildSelectDate(context),
             _buildSelectHour(),
           ],
