@@ -20,11 +20,29 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
   DateTime? selectedDate;
   String? selectedHour;
   late Future<List<String>> availableTimes;
+  Map<String, dynamic>? businessHours;
 
   @override
   void initState() {
     super.initState();
     availableTimes = Future.value([]);
+    _fetchBusinessHours();
+  }
+
+  Future<void> _fetchBusinessHours() async {
+    try {
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('configuration')
+          .doc('businessHours')
+          .get();
+      if (snapshot.exists) {
+        setState(() {
+          businessHours = snapshot.data() as Map<String, dynamic>?;
+        });
+      }
+    } catch (e) {
+      print("Error fetching business hours: $e");
+    }
   }
 
   Future<List<String>> _fetchReservedTimes(DateTime date) async {
@@ -53,17 +71,57 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
   }
 
   Future<List<String>> _calculateAvailableTimes(DateTime date) async {
-    final List<String> allTimes = List.generate(
-        10, (index) => '${(9 + index).toString().padLeft(2, '0')}:00');
+    if (businessHours == null) {
+      return [];
+    }
+
+    String dayOfWeek = DateFormat('EEEE').format(date);
+    if (!businessHours!.containsKey(dayOfWeek) ||
+        !businessHours![dayOfWeek]['open']) {
+      return [];
+    }
+
+    String? openTime = businessHours![dayOfWeek]['openTime'];
+    String? closeTime = businessHours![dayOfWeek]['closeTime'];
+    if (openTime == null || closeTime == null) {
+      return [];
+    }
+
+    TimeOfDay open = _timeOfDayFromString(openTime);
+    TimeOfDay close = _timeOfDayFromString(closeTime);
+
+    final List<String> allTimes = [];
+    for (int hour = open.hour; hour < close.hour; hour++) {
+      allTimes.add('${hour.toString().padLeft(2, '0')}:00');
+    }
+
     final reservedTimes = await _fetchReservedTimes(date);
     return allTimes.where((time) => !reservedTimes.contains(time)).toList();
   }
 
+  TimeOfDay _timeOfDayFromString(String time) {
+    final format = RegExp(r'(\d{2}):(\d{2})');
+    final match = format.firstMatch(time);
+    if (match != null) {
+      int hour = int.parse(match.group(1)!);
+      int minute = int.parse(match.group(2)!);
+      return TimeOfDay(hour: hour, minute: minute);
+    }
+    return TimeOfDay.now();
+  }
+
   Widget _buildSelectDate(BuildContext context) {
     return ListTile(
-      title: Text(selectedDate == null
-          ? 'Select date'
-          : 'Selected date: ${DateFormat('yyyy-MM-dd').format(selectedDate!)}'),
+      title: Row(
+        children: [
+          Text(selectedDate == null
+              ? 'Select date'
+              : 'Selected date: ${DateFormat('yyyy-MM-dd').format(selectedDate!)}'),
+          SizedBox(width: 10), // Add some spacing
+          if (businessHours != null && selectedDate != null)
+            _buildBusinessHoursIndicator(selectedDate!),
+        ],
+      ),
       trailing: const Icon(Icons.calendar_today),
       onTap: () async {
         final DateTime? pickedDate = await showDatePicker(
@@ -82,6 +140,15 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
         }
       },
     );
+  }
+
+  Widget _buildBusinessHoursIndicator(DateTime date) {
+    String dayOfWeek = DateFormat('EEEE').format(date);
+    bool isOpen = businessHours![dayOfWeek]['open'];
+
+    return isOpen
+        ? Icon(Icons.check_circle, color: Colors.green)
+        : Icon(Icons.cancel, color: Colors.red);
   }
 
   void _showAvailableTimesDialog(BuildContext context, List<String> times) {
@@ -120,6 +187,75 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
         );
       },
     );
+  }
+
+  void _showBusinessHoursDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: EdgeInsets.all(20),
+            child: businessHours != null
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: _buildBusinessHoursList(),
+                  )
+                : Center(
+                    child: CircularProgressIndicator(),
+                  ),
+          ),
+        );
+      },
+    );
+  }
+
+  List<Widget> _buildBusinessHoursList() {
+    List<Widget> list = [];
+
+    if (businessHours != null) {
+      // Define a list of weekdays in the correct order
+      List<String> weekdays = DateFormat.E().dateSymbols.WEEKDAYS;
+
+      // Sort days of the week according to their order in weekdays list
+      List<String> sortedDays =
+          businessHours!.keys.where((day) => weekdays.contains(day)).toList()
+            ..sort((a, b) {
+              // Get the index of each day in the weekdays list
+              int indexA = weekdays.indexOf(a);
+              int indexB = weekdays.indexOf(b);
+
+              // Adjust the comparison to start with Monday (index 1) instead of Sunday (index 0)
+              if (indexA == 0) indexA = 7;
+              if (indexB == 0) indexB = 7;
+
+              return indexA.compareTo(indexB);
+            });
+
+      for (var day in sortedDays) {
+        bool isOpen = businessHours![day]['open'] ?? false;
+
+        String openTime = businessHours![day]['openTime'] ?? '';
+        String closeTime = businessHours![day]['closeTime'] ?? '';
+
+        String hoursText = isOpen ? '$openTime - $closeTime' : 'CLOSED';
+
+        list.add(ListTile(
+          title: Text(
+            '$day: $hoursText',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: isOpen ? Colors.black : Colors.red,
+            ),
+          ),
+        ));
+      }
+    } else {
+      // Handle the case when businessHours is null
+      list.add(Text('Business hours data is not available.'));
+    }
+
+    return list;
   }
 
   Widget _buildSelectHour() {
@@ -169,6 +305,13 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            ListTile(
+              title: Text('Business Hours'),
+              trailing: const Icon(Icons.store),
+              onTap: () {
+                _showBusinessHoursDialog(context);
+              },
+            ),
             _buildSelectDate(context),
             _buildSelectHour(),
           ],

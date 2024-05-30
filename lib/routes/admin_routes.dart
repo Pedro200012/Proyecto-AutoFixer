@@ -10,6 +10,7 @@ import 'package:aplicacion_taller/screens/admin/perfiles/servicios/_servicios_sc
 import 'package:aplicacion_taller/screens/admin/_metricas_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_reparaciones_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_turnos_screen.dart';
+import 'package:aplicacion_taller/screens/admin/business_hours_screen.dart';
 
 import 'package:aplicacion_taller/entities/user.dart';
 
@@ -53,5 +54,9 @@ final adminRoutes = [
   GoRoute(
     path: '/administrador/add-service',
     builder: (context, state) => const AddServices(),
+  ),
+  GoRoute(
+    path: '/administrador/business-hours',
+    builder: (context, state) => const BusinessHoursScreen(),
   ),
 ];
