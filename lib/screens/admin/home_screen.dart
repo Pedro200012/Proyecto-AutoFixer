@@ -30,6 +30,11 @@ class AdminHomeScreen extends StatelessWidget {
           route: '/administrador/servicios',
           icon: Icon(Icons.local_hospital),
         ),
+        NavigationButton(
+          text: 'Business Hours',
+          route: '/administrador/business-hours',
+          icon: Icon(Icons.access_time),
+        ),
       ],
     );
   }
