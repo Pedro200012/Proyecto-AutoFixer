@@ -198,7 +198,7 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
             padding: EdgeInsets.all(20),
             child: businessHours != null
                 ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: _buildBusinessHoursList(),
                   )
                 : Center(
