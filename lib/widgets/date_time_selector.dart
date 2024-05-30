@@ -20,11 +20,29 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
   DateTime? selectedDate;
   String? selectedHour;
   late Future<List<String>> availableTimes;
+  Map<String, dynamic>? businessHours;
 
   @override
   void initState() {
     super.initState();
     availableTimes = Future.value([]);
+    _fetchBusinessHours();
+  }
+
+  Future<void> _fetchBusinessHours() async {
+    try {
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('configuration')
+          .doc('businessHours')
+          .get();
+      if (snapshot.exists) {
+        setState(() {
+          businessHours = snapshot.data() as Map<String, dynamic>?;
+        });
+      }
+    } catch (e) {
+      print("Error fetching business hours: $e");
+    }
   }
 
   Future<List<String>> _fetchReservedTimes(DateTime date) async {
@@ -53,10 +71,43 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
   }
 
   Future<List<String>> _calculateAvailableTimes(DateTime date) async {
-    final List<String> allTimes = List.generate(
-        10, (index) => '${(9 + index).toString().padLeft(2, '0')}:00');
+    if (businessHours == null) {
+      return [];
+    }
+
+    String dayOfWeek = DateFormat('EEEE').format(date);
+    if (!businessHours!.containsKey(dayOfWeek) ||
+        !businessHours![dayOfWeek]['open']) {
+      return [];
+    }
+
+    String? openTime = businessHours![dayOfWeek]['openTime'];
+    String? closeTime = businessHours![dayOfWeek]['closeTime'];
+    if (openTime == null || closeTime == null) {
+      return [];
+    }
+
+    TimeOfDay open = _timeOfDayFromString(openTime);
+    TimeOfDay close = _timeOfDayFromString(closeTime);
+
+    final List<String> allTimes = [];
+    for (int hour = open.hour; hour < close.hour; hour++) {
+      allTimes.add('${hour.toString().padLeft(2, '0')}:00');
+    }
+
     final reservedTimes = await _fetchReservedTimes(date);
     return allTimes.where((time) => !reservedTimes.contains(time)).toList();
+  }
+
+  TimeOfDay _timeOfDayFromString(String time) {
+    final format = RegExp(r'(\d{2}):(\d{2})');
+    final match = format.firstMatch(time);
+    if (match != null) {
+      int hour = int.parse(match.group(1)!);
+      int minute = int.parse(match.group(2)!);
+      return TimeOfDay(hour: hour, minute: minute);
+    }
+    return TimeOfDay.now();
   }
 
   Widget _buildSelectDate(BuildContext context) {
