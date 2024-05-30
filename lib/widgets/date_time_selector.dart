@@ -112,9 +112,16 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
 
   Widget _buildSelectDate(BuildContext context) {
     return ListTile(
-      title: Text(selectedDate == null
-          ? 'Select date'
-          : 'Selected date: ${DateFormat('yyyy-MM-dd').format(selectedDate!)}'),
+      title: Row(
+        children: [
+          Text(selectedDate == null
+              ? 'Select date'
+              : 'Selected date: ${DateFormat('yyyy-MM-dd').format(selectedDate!)}'),
+          SizedBox(width: 10), // Add some spacing
+          if (businessHours != null && selectedDate != null)
+            _buildBusinessHoursIndicator(selectedDate!),
+        ],
+      ),
       trailing: const Icon(Icons.calendar_today),
       onTap: () async {
         final DateTime? pickedDate = await showDatePicker(
@@ -133,6 +140,15 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
         }
       },
     );
+  }
+
+  Widget _buildBusinessHoursIndicator(DateTime date) {
+    String dayOfWeek = DateFormat('EEEE').format(date);
+    bool isOpen = businessHours![dayOfWeek]['open'];
+
+    return isOpen
+        ? Icon(Icons.check_circle, color: Colors.green)
+        : Icon(Icons.cancel, color: Colors.red);
   }
 
   void _showAvailableTimesDialog(BuildContext context, List<String> times) {
