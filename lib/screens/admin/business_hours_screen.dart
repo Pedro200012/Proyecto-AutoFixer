@@ -33,8 +33,10 @@ class _BusinessHoursScreenState extends State<BusinessHoursScreen> {
 
   Future<void> _fetchBusinessHours() async {
     try {
-      DocumentSnapshot snapshot =
-          await _firestore.collection('businessHours').doc('hours').get();
+      DocumentSnapshot snapshot = await _firestore
+          .collection('configuration')
+          .doc('businessHours')
+          .get();
       if (snapshot.exists) {
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
         setState(() {
@@ -59,19 +61,28 @@ class _BusinessHoursScreenState extends State<BusinessHoursScreen> {
   }
 
   Future<void> _saveBusinessHours() async {
-    Map<String, dynamic> data = {};
-    _openDays.forEach((day, open) {
-      data[day] = {
-        'open': open,
-        'openTime': _openingTimes[day] != null
-            ? _timeOfDayToString(_openingTimes[day]!)
-            : null,
-        'closeTime': _closingTimes[day] != null
-            ? _timeOfDayToString(_closingTimes[day]!)
-            : null,
-      };
-    });
-    await _firestore.collection('businessHours').doc('hours').set(data);
+    try {
+      Map<String, dynamic> data = {};
+      _openDays.forEach((day, open) {
+        data[day] = {
+          'open': open,
+          'openTime': _openingTimes[day] != null
+              ? _timeOfDayToString(_openingTimes[day]!)
+              : null,
+          'closeTime': _closingTimes[day] != null
+              ? _timeOfDayToString(_closingTimes[day]!)
+              : null,
+        };
+      });
+      await _firestore
+          .collection('configuration')
+          .doc('businessHours')
+          .set(data);
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Error saving business hours';
+      });
+    }
   }
 
   TimeOfDay _timeOfDayFromString(String time) {
@@ -92,9 +103,13 @@ class _BusinessHoursScreenState extends State<BusinessHoursScreen> {
   }
 
   void _pickTime(String day, bool isOpeningTime) async {
+    TimeOfDay initialTime = isOpeningTime
+        ? (_openingTimes[day] ?? TimeOfDay(hour: 9, minute: 0))
+        : (_closingTimes[day] ?? TimeOfDay(hour: 18, minute: 0));
+
     TimeOfDay? pickedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: initialTime,
     );
 
     if (pickedTime != null) {
@@ -105,6 +120,7 @@ class _BusinessHoursScreenState extends State<BusinessHoursScreen> {
           _closingTimes[day] = pickedTime;
         }
       });
+      _saveBusinessHours(); // Save on time change
     }
   }
 
@@ -128,6 +144,7 @@ class _BusinessHoursScreenState extends State<BusinessHoursScreen> {
                     setState(() {
                       _openDays[day] = value;
                     });
+                    _saveBusinessHours(); // Save on switch change
                   },
                 ),
               ],
@@ -165,12 +182,6 @@ class _BusinessHoursScreenState extends State<BusinessHoursScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Business Hours'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: _saveBusinessHours,
-          ),
-        ],
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
