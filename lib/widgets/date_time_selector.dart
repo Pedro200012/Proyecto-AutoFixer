@@ -306,8 +306,8 @@ class _DateTimeSelectorState extends State<DateTimeSelector> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ListTile(
-              title: Text('Business Hours',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              title: Text('Business Hours'),
+              trailing: const Icon(Icons.store),
               onTap: () {
                 _showBusinessHoursDialog(context);
               },
