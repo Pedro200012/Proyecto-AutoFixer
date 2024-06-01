@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Logo or Image
                 ClipOval(
                   child: Image.asset(
-                    'lib/assets/logoAutoFixer.png',
+                    'lib/assets/logoAutoFixerAgrandado.png',
                     height: 150,
                     width: 150,
                     fit: BoxFit.cover,
@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.email),
+                    prefixIcon: const Icon(Icons.email),
                     labelText: 'Email',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
