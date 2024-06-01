@@ -38,49 +38,85 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
-              ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Logo or Image
+                ClipOval(
+                  child: Image.asset(
+                    'lib/assets/logoAutoFixer.png',
+                    height: 150,
+                    width: 150,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                const SizedBox(height: 32.0),
+                // Email Field
+                TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.email),
+                    labelText: 'Email',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                // Password Field
+                TextField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.lock),
+                    labelText: 'Password',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  obscureText: true,
+                ),
+                const SizedBox(height: 16.0),
+                // Login Button
+                ElevatedButton(
+                  onPressed: _login,
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blueAccent,
+                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  child: const Text('Login'),
+                ),
+                const SizedBox(height: 16.0),
+                // Error Message
+                if (_errorMessage.isNotEmpty)
+                  Text(
+                    _errorMessage,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                const SizedBox(height: 16.0),
+                // Register Text Button
+                TextButton(
+                  onPressed: () {
+                    context.push('/register');
+                  },
+                  child: const Text(
+                    'Don\'t have an account? Register here.',
+                    style: TextStyle(
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 16.0),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: _login,
-              child: const Text('Login'),
-            ),
-            const SizedBox(height: 16.0),
-            if (_errorMessage.isNotEmpty)
-              Text(
-                _errorMessage,
-                style: const TextStyle(color: Colors.red),
-              ),
-            const SizedBox(height: 16.0),
-            TextButton(
-              onPressed: () {
-                context.push('/register');
-              },
-              child: const Text('Don\'t have an account? Register here.'),
-            ),
-          ],
+          ),
         ),
       ),
     );
