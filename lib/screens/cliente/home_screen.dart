@@ -10,11 +10,11 @@ class ClienteHomeScreen extends StatelessWidget {
     return const HomeScreenBase(
       title: 'Home: Cliente',
       buttons: [
-        NavigationButton(
-          text: 'Solicitar turno',
-          route: '/cliente/turns/create',
-          icon: Icon(Icons.calendar_month),
-        ),
+        // NavigationButton(
+        //   text: 'Solicitar turno',
+        //   route: '/cliente/turns/create',
+        //   icon: Icon(Icons.calendar_month),
+        // ),
         NavigationButton(
           text: 'Mis vehiculos',
           route: '/cliente/vehiculo/list',
@@ -26,7 +26,7 @@ class ClienteHomeScreen extends StatelessWidget {
           icon: Icon(Icons.build),
         ),
         NavigationButton(
-          text: 'Solicitar turno (2)',
+          text: 'Solicitar turno',
           route: '/cliente/turns/create/refactor',
           icon: Icon(Icons.calendar_month),
         ),
