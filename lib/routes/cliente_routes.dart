@@ -28,10 +28,10 @@ final clienteRoutes = [
     path: '/cliente/calendar',
     builder: (context, state) => const RepairRequestCalendar(),
   ),
-  GoRoute(
-    path: '/cliente/repair-form',
-    builder: (context, state) => RepairRequestFormScreen(),
-  ),
+  // GoRoute(
+  //   path: '/cliente/repair-form',
+  //   builder: (context, state) => RepairRequestFormScreen(),
+  // ),
   GoRoute(
     path: '/cliente/turns/create',
     builder: (context, state) => const SeleccionarServicio(),
