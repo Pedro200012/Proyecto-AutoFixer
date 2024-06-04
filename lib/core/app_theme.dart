@@ -39,7 +39,7 @@ class AppTheme {
         ),
         colorSchemeSeed: colorList[selectedColor],
         brightness:
-            isDarkMode ? Brightness.dark : Brightness.dark // modo oscuro
+            isDarkMode ? Brightness.light : Brightness.light // modo oscuro
         );
   }
 
