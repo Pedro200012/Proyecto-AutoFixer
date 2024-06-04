@@ -8,22 +8,8 @@ class ClienteHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home: Cliente'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person,
-                size: 30.0), // Tamaño del icono ajustado
-            onPressed: () {
-              context.push('/cliente/editar/perfil/');
-              // Acción del botón de usuario
-            },
-            iconSize: 30.0, // Tamaño del icono ajustado
-          ),
-        ],
-      ),
-      body: const HomeScreenBase(
+    return const Scaffold(
+      body: HomeScreenBase(
         title: 'Funcionalidades de la app',
         buttons: [
 /*           NavigationButton(

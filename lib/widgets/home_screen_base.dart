@@ -25,9 +25,18 @@ class HomeScreenBase extends StatelessWidget {
       automaticallyImplyLeading: true,
       actions: [
         IconButton(
+          icon:
+              const Icon(Icons.person, size: 30.0), // Tamaño del icono ajustado
+          onPressed: () {
+            context.push('/cliente/editar/perfil/');
+            // Acción del botón de usuario
+          },
+          iconSize: 30.0, // Tamaño del icono ajustado
+        ),
+        IconButton(
           icon: const Icon(Icons.logout),
           onPressed: () => _logout(context),
-        ),
+        )
       ],
     );
   }
