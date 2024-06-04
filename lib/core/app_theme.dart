@@ -29,9 +29,17 @@ class AppTheme {
 
   ThemeData getTheme() {
     return ThemeData(
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.black),
+          bodyMedium: TextStyle(color: Colors.black),
+          bodySmall: TextStyle(color: Colors.black),
+          titleLarge: TextStyle(color: Colors.black),
+          titleMedium: TextStyle(color: Colors.black),
+          titleSmall: TextStyle(color: Colors.black)
+        ),
         colorSchemeSeed: colorList[selectedColor],
         brightness:
-            isDarkMode ? Brightness.dark : Brightness.light // modo oscuro
+            isDarkMode ? Brightness.dark : Brightness.dark // modo oscuro
         );
   }
 
