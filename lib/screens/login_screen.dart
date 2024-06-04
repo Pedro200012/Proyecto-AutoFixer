@@ -62,7 +62,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: const TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.email),
-                    labelText: 'Email',
+                     labelStyle: const TextStyle(color: Colors.black), // Asegura que la etiqueta es negra
+                    hintText: 'Enter your email',
+                    hintStyle: const TextStyle(color: Colors.black),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
