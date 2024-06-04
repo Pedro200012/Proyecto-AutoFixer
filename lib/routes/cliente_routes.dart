@@ -1,3 +1,4 @@
+import 'package:aplicacion_taller/screens/cliente/EditCliente.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:aplicacion_taller/screens/cliente/home_screen.dart';
@@ -69,5 +70,10 @@ final clienteRoutes = [
   GoRoute(
     path: '/cliente/turns/create/refactor',
     builder: (context, state) => TurnCreate(),
+  ),
+   
+   GoRoute(
+    path: '/cliente/editar/perfil',
+    builder: (context, state) => const EditUserScreen(),
   ),
 ];
