@@ -10,7 +10,7 @@ class ClienteHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: HomeScreenBase(
-        title: 'Funcionalidades de la app',
+        title: 'Home: cliente',
         buttons: [
 /*           NavigationButton(
             text: 'Solicitar turno',
