@@ -13,7 +13,8 @@ class ClienteHomeScreen extends StatelessWidget {
         title: const Text('Home: Cliente'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.person, size: 30.0), // Tamaño del icono ajustado
+            icon: const Icon(Icons.person,
+                size: 30.0), // Tamaño del icono ajustado
             onPressed: () {
               context.push('/cliente/editar/perfil/');
               // Acción del botón de usuario
@@ -25,11 +26,11 @@ class ClienteHomeScreen extends StatelessWidget {
       body: const HomeScreenBase(
         title: 'Funcionalidades de la app',
         buttons: [
-          NavigationButton(
+/*           NavigationButton(
             text: 'Solicitar turno',
             route: '/cliente/turns/create',
             icon: Icon(Icons.calendar_month),
-          ),
+          ), */
           NavigationButton(
             text: 'Mis vehiculos',
             route: '/cliente/vehiculo/list',
@@ -41,7 +42,7 @@ class ClienteHomeScreen extends StatelessWidget {
             icon: Icon(Icons.build),
           ),
           NavigationButton(
-            text: 'Solicitar turno (2)',
+            text: 'Solicitar turno',
             route: '/cliente/turns/create/refactor',
             icon: Icon(Icons.calendar_month),
           ),
