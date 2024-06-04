@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:aplicacion_taller/entities/turn.dart';
 import 'package:aplicacion_taller/entities/user.dart';
@@ -12,13 +13,10 @@ class TurnosScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Turnos'),
-        automaticallyImplyLeading: true, // Esto muestra la flecha de retroceso
+        automaticallyImplyLeading: true,
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream:FirebaseFirestore.instance
-                .collection('turns')
-                .where('confirm', isEqualTo: true) 
-                .snapshots(),
+        stream: FirebaseFirestore.instance.collection('turns').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Center(child: Text('Algo salió mal'));
@@ -32,8 +30,13 @@ class TurnosScreen extends StatelessWidget {
 
           List<Turn> turns =
               data.docs.map((doc) => Turn.fromFirestore(doc)).toList();
+          List<Turn> pendingTurns =
+              turns.where((turn) => turn.state == 'pending').toList();
+          List<Turn> confirmedTurns =
+              turns.where((turn) => turn.state == 'confirm').toList();
 
-          return _ListTurnView(turns: turns);
+          return _ListTurnView(
+              pendingTurns: pendingTurns, confirmedTurns: confirmedTurns);
         },
       ),
     );
@@ -41,18 +44,30 @@ class TurnosScreen extends StatelessWidget {
 }
 
 class _ListTurnView extends StatelessWidget {
-  final List<Turn> turns;
+  final List<Turn> pendingTurns;
+  final List<Turn> confirmedTurns;
 
-  const _ListTurnView({required this.turns});
+  const _ListTurnView(
+      {required this.pendingTurns, required this.confirmedTurns});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: turns.length,
-      itemBuilder: (context, index) {
-        final turn = turns[index];
-        return _TurnItem(turn: turn);
-      },
+    return ListView(
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text('Turnos Pendientes',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        ),
+        ...pendingTurns.map((turn) => _TurnItem(turn: turn)).toList(),
+        const Divider(),
+        const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text('Turnos Confirmados',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        ),
+        ...confirmedTurns.map((turn) => _TurnItem(turn: turn)).toList(),
+      ],
     );
   }
 }
@@ -64,13 +79,12 @@ class _TurnItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String formattedDate = DateFormat('dd MMM yyyy, hh:mm a').format(turn.ingreso);
+    String formattedDate =
+        DateFormat('dd MMM yyyy, hh:mm a').format(turn.ingreso);
 
     return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance
-          .collection('users')
-          .doc(turn.userId)
-          .get(),
+      future:
+          FirebaseFirestore.instance.collection('users').doc(turn.userId).get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const LinearProgressIndicator();
@@ -88,6 +102,9 @@ class _TurnItem extends StatelessWidget {
           child: ListTile(
             title: Text(user.name),
             subtitle: Text(formattedDate),
+            onTap: () {
+              context.push('/administrador/turno-detail', extra: turn);
+            },
           ),
         );
       },

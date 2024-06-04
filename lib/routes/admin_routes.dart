@@ -1,12 +1,14 @@
 import 'package:aplicacion_taller/entities/service.dart';
-import 'package:aplicacion_taller/screens/admin/perfiles/servicios/add_services_screen.dart';
-import 'package:aplicacion_taller/screens/admin/perfiles/servicios/service_detail_screen.dart';
+import 'package:aplicacion_taller/entities/turn.dart';
+import 'package:aplicacion_taller/screens/admin/_turnos_detail_screen.dart';
+import 'package:aplicacion_taller/screens/admin/servicios/add_services_screen.dart';
+import 'package:aplicacion_taller/screens/admin/servicios/service_detail_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:aplicacion_taller/screens/admin/home_screen.dart';
 import 'package:aplicacion_taller/screens/admin/perfiles/home_screen.dart';
 import 'package:aplicacion_taller/screens/admin/perfiles/profile_screen.dart';
 import 'package:aplicacion_taller/screens/admin/solicitudAdmin_screen.dart';
-import 'package:aplicacion_taller/screens/admin/perfiles/servicios/_servicios_screen.dart';
+import 'package:aplicacion_taller/screens/admin/servicios/_servicios_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_metricas_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_reparaciones_screen.dart';
 import 'package:aplicacion_taller/screens/admin/_turnos_screen.dart';
@@ -58,5 +60,9 @@ final adminRoutes = [
   GoRoute(
     path: '/administrador/business-hours',
     builder: (context, state) => const BusinessHoursScreen(),
+  ),
+  GoRoute(
+    path: '/administrador/turno-detail',
+    builder: (context, state) => TurnoDetailsScreen(turn: state.extra as Turn),
   ),
 ];

@@ -1,8 +1,8 @@
 import 'package:aplicacion_taller/entities/service.dart';
-import 'package:aplicacion_taller/screens/admin/perfiles/servicios/service_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
+import 'service_detail_screen.dart';
 
 class ServiciosScreen extends StatelessWidget {
   const ServiciosScreen({super.key});
@@ -12,7 +12,7 @@ class ServiciosScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Servicios'),
-        automaticallyImplyLeading: true, // This shows the back arrow
+        automaticallyImplyLeading: true, // Esto muestra la flecha de retroceso
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('services').snapshots(),
@@ -39,7 +39,14 @@ class ServiciosScreen extends StatelessWidget {
 
               return GestureDetector(
                 onTap: () {
-                  // context.push('/cliente/vehiculo/details', extra: service);
+                  // Navegar a la pantalla de detalles del servicio
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute( // podria agregarse en el router
+                      builder: (context) =>
+                          ServiceDetailScreen(serviceId: service.id),
+                    ),
+                  );
                 },
                 child: Card(
                   margin: const EdgeInsets.all(10.0),
@@ -53,6 +60,14 @@ class ServiciosScreen extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          '\$${service.price.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.grey,
                           ),
                         ),
                       ],
