@@ -15,7 +15,6 @@ class HomeScreenBase extends StatelessWidget {
 
   Future<void> _logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
-    // ignore: use_build_context_synchronously
     context.go('/');
   }
 
@@ -40,14 +39,22 @@ class HomeScreenBase extends StatelessWidget {
     );
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(context),
-      body: ListView.separated(
-        itemCount: buttons.length,
-        itemBuilder: (context, index) => buttons[index],
-        separatorBuilder: (context, index) => const SizedBox(height: 10),
+      body: SingleChildScrollView(
+        child: Column(
+          children: buttons.map((button) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height: 270, // Altura fija para cada botón
+                child: button,
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }

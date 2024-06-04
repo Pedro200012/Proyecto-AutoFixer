@@ -1,8 +1,6 @@
-import 'package:aplicacion_taller/entities/service.dart';
 import 'package:aplicacion_taller/entities/turn.dart';
 import 'package:aplicacion_taller/screens/admin/_turnos_detail_screen.dart';
 import 'package:aplicacion_taller/screens/admin/servicios/add_services_screen.dart';
-import 'package:aplicacion_taller/screens/admin/servicios/service_detail_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:aplicacion_taller/screens/admin/home_screen.dart';
 import 'package:aplicacion_taller/screens/admin/perfiles/home_screen.dart';

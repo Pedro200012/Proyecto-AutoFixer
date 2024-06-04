@@ -5,6 +5,7 @@ import 'package:aplicacion_taller/widgets/navigation_button.dart';
 class AdminHomeScreen extends StatelessWidget {
   const AdminHomeScreen({super.key});
 
+
   @override
   Widget build(BuildContext context) {
     return const HomeScreenBase(
@@ -13,27 +14,27 @@ class AdminHomeScreen extends StatelessWidget {
         NavigationButton(
           text: 'Metricas',
           route: '/administrador/metricas',
-          icon: Icon(Icons.bar_chart),
+          icon: Icon(Icons.bar_chart, size: 90, color: Colors.white),
         ),
         NavigationButton(
           text: 'Turnos',
           route: '/administrador/turnos',
-          icon: Icon(Icons.calendar_month),
+          icon: Icon(Icons.calendar_month, size: 90, color: Colors.white),
         ),
         NavigationButton(
           text: 'Usuarios',
           route: '/administrador/perfiles',
-          icon: Icon(Icons.person),
+          icon: Icon(Icons.person, size: 90, color: Colors.white),
         ),
         NavigationButton(
           text: 'Servicios',
           route: '/administrador/servicios',
-          icon: Icon(Icons.local_hospital),
+          icon: Icon(Icons.local_hospital, size: 90, color: Colors.white),
         ),
         NavigationButton(
           text: 'Business Hours',
           route: '/administrador/business-hours',
-          icon: Icon(Icons.access_time),
+          icon: Icon(Icons.access_time, size: 90, color: Colors.white),
         ),
       ],
     );

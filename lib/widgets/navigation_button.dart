@@ -15,11 +15,27 @@ class NavigationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(text),
-      leading: icon,
-      trailing: const Icon(Icons.arrow_forward_ios),
-      onTap: () => context.push(route),
+    return InkWell(
+      onTap: () =>  context.push(route),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.lightBlueAccent.withOpacity(0.4),
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              icon,
+              const SizedBox(height: 10),
+              Text(
+                text,
+                style: const TextStyle(fontSize: 30, color: Colors.white), // Aumenta el tamaño del texto
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
